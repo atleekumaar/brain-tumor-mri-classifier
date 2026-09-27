@@ -49,11 +49,15 @@
   --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Base Resets */
+/* Base Resets & Global Hidden Enforcer */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 html, body {
@@ -749,7 +753,6 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
 }
 
-/* CSS-drawn synthetic MRI avatars for demo buttons */
 .glioma-thumb { background: radial-gradient(circle at 60% 40%, #ff5c6c 10%, #444 35%, #070B12 70%); }
 .meningioma-thumb { background: radial-gradient(circle at 25% 35%, #ffb547 12%, #444 40%, #070B12 70%); }
 .pituitary-thumb { background: radial-gradient(circle at 50% 65%, #7c6cff 12%, #444 40%, #070B12 70%); }
@@ -878,7 +881,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-muted);
 }
 
-/* Dropzone Preview Stage (After File Selected) */
+/* Dropzone Preview Stage */
 .dropzone-preview-stage {
   display: flex;
   align-items: center;
@@ -2183,7 +2186,7 @@ h1, h2, h3, h4, h5, h6 {
 .http-comment { color: var(--text-muted); }
 
 /* ==========================================================================
-   AI LOADING MODAL & OVERLAYS
+   AI LOADING MODAL & OVERLAYS (EXPLICIT DISPLAY CONTROLS)
    ========================================================================== */
 .loading-modal-backdrop, .modal-backdrop {
   position: fixed;
@@ -2196,6 +2199,11 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   padding: 20px;
   animation: fadeIn 0.15s ease;
+}
+
+.loading-modal-backdrop[hidden],
+.modal-backdrop[hidden] {
+  display: none !important;
 }
 
 .loading-modal-card {

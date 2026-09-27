@@ -6,7 +6,6 @@
 (function () {
   "use strict";
 
-  // Backend API URL
   const API_BASE = window.location.origin.includes("http") ? window.location.origin : "http://127.0.0.1:8000";
 
   // 4 Core Model Classes Metadata (Matching PyTorch model)
@@ -70,18 +69,17 @@
     canvas.height = 224;
     const ctx = canvas.getContext("2d");
 
-    // Dark cranial cavity background
     ctx.fillStyle = "#05070B";
     ctx.fillRect(0, 0, 224, 224);
 
-    // Brain Skull Outline (Oval)
+    // Brain Skull Outline
     ctx.strokeStyle = "#4A5568";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.ellipse(112, 112, 85, 95, 0, 0, 2 * Math.PI);
     ctx.stroke();
 
-    // Brain Parenchyma (Soft gray tissue)
+    // Parenchyma
     const radGrad = ctx.createRadialGradient(112, 112, 20, 112, 112, 85);
     radGrad.addColorStop(0, "#485568");
     radGrad.addColorStop(0.7, "#2D3748");
@@ -89,7 +87,7 @@
     ctx.fillStyle = radGrad;
     ctx.fill();
 
-    // Sulci & Gyri (Brain folds lines)
+    // Sulci & Fissures
     ctx.strokeStyle = "rgba(15, 23, 42, 0.6)";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -98,19 +96,18 @@
     ctx.arc(90, 130, 20, Math.PI, 0);
     ctx.arc(134, 130, 20, Math.PI, 0);
     ctx.moveTo(112, 25);
-    ctx.lineTo(112, 200); // Interhemispheric fissure
+    ctx.lineTo(112, 200);
     ctx.stroke();
 
-    // Ventricles (CSF - Dark butterfly center)
+    // Ventricles
     ctx.fillStyle = "#0D131F";
     ctx.beginPath();
     ctx.ellipse(100, 105, 8, 22, 0.2, 0, 2 * Math.PI);
     ctx.ellipse(124, 105, 8, 22, -0.2, 0, 2 * Math.PI);
     ctx.fill();
 
-    // Tumor Lesion based on class
+    // Lesions
     if (type === "glioma") {
-      // Right frontal hyperintense mass with irregular border
       const tGrad = ctx.createRadialGradient(140, 85, 4, 140, 85, 24);
       tGrad.addColorStop(0, "#FFFFFF");
       tGrad.addColorStop(0.5, "#CBD5E1");
@@ -121,7 +118,6 @@
       ctx.arc(140, 85, 24, 0, 2 * Math.PI);
       ctx.fill();
     } else if (type === "meningioma") {
-      // Dural-based extra-axial convex lesion
       const tGrad = ctx.createRadialGradient(50, 95, 3, 50, 95, 18);
       tGrad.addColorStop(0, "#F1F5F9");
       tGrad.addColorStop(0.6, "#94A3B8");
@@ -131,7 +127,6 @@
       ctx.arc(50, 95, 18, 0, 2 * Math.PI);
       ctx.fill();
     } else if (type === "pituitary") {
-      // Sellar / skull base hyperintensity
       const tGrad = ctx.createRadialGradient(112, 160, 2, 112, 160, 16);
       tGrad.addColorStop(0, "#FFFFFF");
       tGrad.addColorStop(0.6, "#A0AEC0");
@@ -145,7 +140,6 @@
     return canvas.toDataURL("image/png");
   }
 
-  // Pre-generate sample dataUrls
   const SAMPLES = {
     glioma: createSyntheticMri("glioma"),
     meningioma: createSyntheticMri("meningioma"),
@@ -153,7 +147,6 @@
     notumor: createSyntheticMri("notumor")
   };
 
-  // Convert DataURL to File object for real multipart upload
   function dataUrlToFile(dataUrl, filename) {
     const arr = dataUrl.split(",");
     const mime = arr[0].match(/:(.*?);/)[1];
@@ -170,26 +163,22 @@
   // DOM REFERENCES
   // =========================================================================
   const dom = {
-    // Navigation
     navLinks: document.querySelectorAll("[data-tab]"),
     tabViews: document.querySelectorAll(".tab-view"),
     brandHomeBtn: document.getElementById("brandHomeBtn"),
     quickAnalyzeBtn: document.getElementById("quickAnalyzeBtn"),
 
-    // System Status
     systemStatusDot: document.getElementById("systemStatusDot"),
     systemStatusText: document.getElementById("systemStatusText"),
     latencyChip: document.getElementById("latencyChip"),
     sidebarDeviceName: document.getElementById("sidebarDeviceName"),
 
-    // Overview View
     overviewAccuracy: document.getElementById("overviewAccuracy"),
     overviewInferenceTime: document.getElementById("overviewInferenceTime"),
     overviewScanCount: document.getElementById("overviewScanCount"),
     overviewRecentTbody: document.getElementById("overviewRecentTbody"),
     sampleScanBtns: document.querySelectorAll(".sample-scan-btn"),
 
-    // Upload View
     dropZone: document.getElementById("dropZone"),
     filePickerInput: document.getElementById("filePickerInput"),
     dropzonePrompt: document.getElementById("dropzonePrompt"),
@@ -202,7 +191,6 @@
     changeSelectedFileBtn: document.getElementById("changeSelectedFileBtn"),
     startInferenceBtn: document.getElementById("startInferenceBtn"),
 
-    // Workspace View
     panelChangeScanBtn: document.getElementById("panelChangeScanBtn"),
     workspaceNewScanBtn: document.getElementById("workspaceNewScanBtn"),
     studyThumbnail: document.getElementById("studyThumbnail"),
@@ -211,7 +199,6 @@
     studyStatusPill: document.getElementById("studyStatusPill"),
     studyFileName: document.getElementById("studyFileName"),
 
-    // Center MRI Viewer
     mriViewport: document.getElementById("mriViewport"),
     mriCanvasStage: document.getElementById("mriCanvasStage"),
     viewerEmptyState: document.getElementById("viewerEmptyState"),
@@ -221,7 +208,6 @@
     hudZoomText: document.getElementById("hudZoomText"),
     hudDimText: document.getElementById("hudDimText"),
 
-    // Viewer Controls
     zoomInBtn: document.getElementById("zoomInBtn"),
     zoomOutBtn: document.getElementById("zoomOutBtn"),
     zoomFitBtn: document.getElementById("zoomFitBtn"),
@@ -235,7 +221,6 @@
     contrastSlider: document.getElementById("contrastSlider"),
     camOpacitySlider: document.getElementById("camOpacitySlider"),
 
-    // AI Analysis Panel
     analysisStatusChip: document.getElementById("analysisStatusChip"),
     analysisStatusLabel: document.getElementById("analysisStatusLabel"),
     verdictClassName: document.getElementById("verdictClassName"),
@@ -246,7 +231,6 @@
     quickCamHeatmap: document.getElementById("quickCamHeatmap"),
     generateReportQuickBtn: document.getElementById("generateReportQuickBtn"),
 
-    // Explainability View
     explainOriginalImg: document.getElementById("explainOriginalImg"),
     explainHeatmapImg: document.getElementById("explainHeatmapImg"),
     explainOverlayBaseImg: document.getElementById("explainOverlayBaseImg"),
@@ -254,18 +238,15 @@
     explainOpacitySlider: document.getElementById("explainOpacitySlider"),
     explainOpacityVal: document.getElementById("explainOpacityVal"),
 
-    // Model Lab View
     modelLabDevice: document.getElementById("modelLabDevice"),
     benchInferenceTime: document.getElementById("benchInferenceTime"),
 
-    // Scan History View
     historySearchInput: document.getElementById("historySearchInput"),
     historyFilterPills: document.getElementById("historyFilterPills"),
     historyTableBody: document.getElementById("historyTableBody"),
     emptyHistoryState: document.getElementById("emptyHistoryState"),
     clearHistoryBtn: document.getElementById("clearHistoryBtn"),
 
-    // Reports View
     repDocId: document.getElementById("repDocId"),
     repStudyId: document.getElementById("repStudyId"),
     repDate: document.getElementById("repDate"),
@@ -278,7 +259,6 @@
     printReportBtn: document.getElementById("printReportBtn"),
     exportJsonReportBtn: document.getElementById("exportJsonReportBtn"),
 
-    // Loading & Disclaimer Modals
     loadingModal: document.getElementById("loadingModal"),
     loadingTimeCounter: document.getElementById("loadingTimeCounter"),
     loadingDevice: document.getElementById("loadingDevice"),
@@ -286,6 +266,7 @@
     lStep2: document.getElementById("lStep2"),
     lStep3: document.getElementById("lStep3"),
     lStep4: document.getElementById("lStep4"),
+
     disclaimerModal: document.getElementById("disclaimerModal"),
     disclaimerModalBtn: document.getElementById("disclaimerModalBtn"),
     closeDisclaimerBtn: document.getElementById("closeDisclaimerBtn"),
@@ -297,6 +278,7 @@
   // TOAST NOTIFICATIONS
   // =========================================================================
   function showToast(message, type = "info") {
+    if (!dom.toastContainer) return;
     const toast = document.createElement("div");
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
@@ -311,7 +293,6 @@
   // TAB NAVIGATION
   // =========================================================================
   function switchTab(tabId) {
-    // Update active nav buttons
     document.querySelectorAll("[data-tab]").forEach(el => {
       if (el.getAttribute("data-tab") === tabId) {
         el.classList.add("active");
@@ -320,7 +301,6 @@
       }
     });
 
-    // Update active view
     dom.tabViews.forEach(view => {
       if (view.id === `view-${tabId}`) {
         view.classList.add("active");
@@ -329,7 +309,6 @@
       }
     });
 
-    // If switching to workspace or explainability or reports, sync view
     if (tabId === "workspace" || tabId === "explainability" || tabId === "reports") {
       updateWorkspaceView();
     }
@@ -361,9 +340,9 @@
       if (res.ok) {
         const data = await res.json();
         state.systemOnline = true;
-        dom.systemStatusDot.className = "status-indicator online";
-        dom.systemStatusText.textContent = "SYSTEM ONLINE";
-        dom.latencyChip.textContent = `${elapsed} ms`;
+        if (dom.systemStatusDot) dom.systemStatusDot.className = "status-indicator online";
+        if (dom.systemStatusText) dom.systemStatusText.textContent = "SYSTEM ONLINE";
+        if (dom.latencyChip) dom.latencyChip.textContent = `${elapsed} ms`;
         if (dom.sidebarDeviceName) dom.sidebarDeviceName.textContent = data.device || "CPU";
         if (dom.modelLabDevice) dom.modelLabDevice.textContent = `${data.device || "CPU"} (Active PyTorch Engine)`;
       } else {
@@ -371,9 +350,9 @@
       }
     } catch (e) {
       state.systemOnline = false;
-      dom.systemStatusDot.className = "status-indicator offline";
-      dom.systemStatusText.textContent = "STANDALONE MODE";
-      dom.latencyChip.textContent = "Local";
+      if (dom.systemStatusDot) dom.systemStatusDot.className = "status-indicator offline";
+      if (dom.systemStatusText) dom.systemStatusText.textContent = "STANDALONE MODE";
+      if (dom.latencyChip) dom.latencyChip.textContent = "Local";
     }
   }
 
@@ -393,31 +372,35 @@
     dom.workspaceNewScanBtn.addEventListener("click", () => switchTab("upload"));
   }
 
-  dom.filePickerInput.addEventListener("change", e => {
-    if (e.target.files && e.target.files[0]) {
-      handleSelectedFile(e.target.files[0]);
-    }
-  });
-
-  ["dragenter", "dragover"].forEach(evt => {
-    dom.dropZone.addEventListener(evt, e => {
-      e.preventDefault();
-      dom.dropZone.classList.add("drag-over");
+  if (dom.filePickerInput) {
+    dom.filePickerInput.addEventListener("change", e => {
+      if (e.target.files && e.target.files[0]) {
+        handleSelectedFile(e.target.files[0]);
+      }
     });
-  });
+  }
 
-  ["dragleave", "drop"].forEach(evt => {
-    dom.dropZone.addEventListener(evt, e => {
-      e.preventDefault();
-      dom.dropZone.classList.remove("drag-over");
+  if (dom.dropZone) {
+    ["dragenter", "dragover"].forEach(evt => {
+      dom.dropZone.addEventListener(evt, e => {
+        e.preventDefault();
+        dom.dropZone.classList.add("drag-over");
+      });
     });
-  });
 
-  dom.dropZone.addEventListener("drop", e => {
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleSelectedFile(e.dataTransfer.files[0]);
-    }
-  });
+    ["dragleave", "drop"].forEach(evt => {
+      dom.dropZone.addEventListener(evt, e => {
+        e.preventDefault();
+        dom.dropZone.classList.remove("drag-over");
+      });
+    });
+
+    dom.dropZone.addEventListener("drop", e => {
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleSelectedFile(e.dataTransfer.files[0]);
+      }
+    });
+  }
 
   function handleSelectedFile(file) {
     if (!file.type.startsWith("image/")) {
@@ -444,7 +427,6 @@
     reader.readAsDataURL(file);
   }
 
-  // Sample Scans Trigger
   dom.sampleScanBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const sampleKey = btn.getAttribute("data-sample");
@@ -471,17 +453,15 @@
   // EXECUTE AI INFERENCE PIPELINE
   // =========================================================================
   async function executeAnalysis(file, dataUrl, expectedHint = null) {
-    // Show AI Loading Modal
     dom.loadingModal.hidden = false;
     dom.laserScanline.classList.add("active");
 
     let timerMs = 0;
     const interval = setInterval(() => {
       timerMs += 10;
-      dom.loadingTimeCounter.textContent = `${timerMs} ms`;
+      if (dom.loadingTimeCounter) dom.loadingTimeCounter.textContent = `${timerMs} ms`;
     }, 10);
 
-    // Step 1: Preprocessing
     setLoadingStep(1);
 
     const formData = new FormData();
@@ -490,10 +470,8 @@
     let result = null;
 
     try {
-      // Step 2: Feature Extraction
       setTimeout(() => setLoadingStep(2), 120);
 
-      // Call FastAPI backend
       const res = await fetch(`${API_BASE}/predict`, {
         method: "POST",
         body: formData
@@ -502,15 +480,11 @@
       if (!res.ok) throw new Error(`Server returned HTTP ${res.status}`);
       result = await res.json();
 
-      // Step 3: Neural Inference
       setLoadingStep(3);
-
-      // Step 4: Grad-CAM
       setTimeout(() => setLoadingStep(4), 220);
 
     } catch (err) {
       console.warn("Backend API error or offline mode fallback:", err);
-      // Realistic calibrated fallback if server endpoint is cold
       const chosenClass = expectedHint || "glioma";
       result = generateCalibratedPrediction(chosenClass, dataUrl);
     } finally {
@@ -519,7 +493,6 @@
         dom.loadingModal.hidden = true;
         dom.laserScanline.classList.remove("active");
 
-        // Save study to state & history
         const studyId = `MRI-2026-${String(state.studiesHistory.length + 1).padStart(3, "0")}`;
         const newStudy = {
           id: studyId,
@@ -545,6 +518,7 @@
 
   function setLoadingStep(stepNum) {
     [dom.lStep1, dom.lStep2, dom.lStep3, dom.lStep4].forEach((el, idx) => {
+      if (!el) return;
       if (idx + 1 < stepNum) {
         el.className = "loading-step-item done";
         el.querySelector(".step-check").innerHTML = "&check;";
@@ -558,11 +532,9 @@
     });
   }
 
-  // Fallback calibrated distribution
   function generateCalibratedPrediction(cls, dataUrl) {
     const probs = { glioma: 1.2, meningioma: 1.5, notumor: 0.8, pituitary: 0.5 };
     probs[cls] = 96.0;
-    // Normalize to 100
     const sum = Object.values(probs).reduce((a, b) => a + b, 0);
     for (let k in probs) probs[k] = parseFloat(((probs[k] / sum) * 100).toFixed(2));
 
@@ -576,7 +548,6 @@
     };
   }
 
-  // Fallback synthetic Grad-CAM heatmap generator
   function createSyntheticHeatmap(baseDataUrl) {
     const canvas = document.createElement("canvas");
     canvas.width = 224;
@@ -600,29 +571,26 @@
   function updateWorkspaceView() {
     const study = state.currentStudy;
     if (!study) {
-      dom.viewerEmptyState.hidden = false;
-      dom.mriViewerImage.style.display = "none";
-      dom.mriViewerHeatmap.style.display = "none";
+      if (dom.viewerEmptyState) dom.viewerEmptyState.hidden = false;
+      if (dom.mriViewerImage) dom.mriViewerImage.style.display = "none";
+      if (dom.mriViewerHeatmap) dom.mriViewerHeatmap.style.display = "none";
       return;
     }
 
-    dom.viewerEmptyState.hidden = true;
-    dom.mriViewerImage.style.display = "block";
-    dom.mriViewerHeatmap.style.display = "block";
+    if (dom.viewerEmptyState) dom.viewerEmptyState.hidden = true;
+    if (dom.mriViewerImage) dom.mriViewerImage.style.display = "block";
+    if (dom.mriViewerHeatmap) dom.mriViewerHeatmap.style.display = "block";
 
-    // Update Left Panel
-    dom.studyThumbnail.src = study.dataUrl;
-    dom.studyIdText.textContent = study.id;
-    dom.studyFileName.textContent = study.filename;
-    dom.studyStatusPill.textContent = "Analysis Complete";
+    if (dom.studyThumbnail) dom.studyThumbnail.src = study.dataUrl;
+    if (dom.studyIdText) dom.studyIdText.textContent = study.id;
+    if (dom.studyFileName) dom.studyFileName.textContent = study.filename;
+    if (dom.studyStatusPill) dom.studyStatusPill.textContent = "Analysis Complete";
 
-    // Update Center Viewer Image
-    dom.mriViewerImage.src = study.dataUrl;
-    dom.mriViewerHeatmap.src = study.gradcamHeatmap;
+    if (dom.mriViewerImage) dom.mriViewerImage.src = study.dataUrl;
+    if (dom.mriViewerHeatmap) dom.mriViewerHeatmap.src = study.gradcamHeatmap;
 
     applyViewerTransforms();
 
-    // Update Right Panel AI Analysis
     const meta = CLASS_META[study.prediction] || {
       label: study.prediction,
       categoryBadge: "Classification",
@@ -630,172 +598,199 @@
       color: "#39D5FF"
     };
 
-    dom.verdictClassName.textContent = meta.label;
-    dom.verdictCategoryBadge.textContent = meta.categoryBadge;
-    dom.verdictCategoryBadge.className = `verdict-category-badge ${meta.badgeClass}`;
-    dom.verdictConfidenceVal.textContent = `${study.confidence.toFixed(1)}%`;
-    dom.verdictConfidenceFill.style.width = `${study.confidence}%`;
+    if (dom.verdictClassName) dom.verdictClassName.textContent = meta.label;
+    if (dom.verdictCategoryBadge) {
+      dom.verdictCategoryBadge.textContent = meta.categoryBadge;
+      dom.verdictCategoryBadge.className = `verdict-category-badge ${meta.badgeClass}`;
+    }
+    if (dom.verdictConfidenceVal) dom.verdictConfidenceVal.textContent = `${study.confidence.toFixed(1)}%`;
+    if (dom.verdictConfidenceFill) dom.verdictConfidenceFill.style.width = `${study.confidence}%`;
 
-    // Probability Bars
-    dom.probBarsList.innerHTML = "";
-    const sorted = Object.entries(study.probabilities).sort((a, b) => b[1] - a[1]);
+    if (dom.probBarsList) {
+      dom.probBarsList.innerHTML = "";
+      const sorted = Object.entries(study.probabilities).sort((a, b) => b[1] - a[1]);
 
-    sorted.forEach(([clsKey, probVal]) => {
-      const clsMeta = CLASS_META[clsKey] || { label: clsKey, color: "#39D5FF" };
-      const row = document.createElement("div");
-      row.className = "prob-row";
-      row.innerHTML = `
-        <div class="prob-row-header">
-          <span class="prob-class-name">${clsMeta.label}</span>
-          <span class="prob-class-val mono">${probVal.toFixed(1)}%</span>
-        </div>
-        <div class="prob-bar-track">
-          <div class="prob-bar-fill fill-${clsKey}" style="width: ${probVal}%"></div>
-        </div>
-      `;
-      dom.probBarsList.appendChild(row);
-    });
-
-    // Quick CAM peek
-    dom.quickCamHeatmap.src = study.gradcamHeatmap;
-
-    // Update Explainability View
-    dom.explainOriginalImg.src = study.dataUrl;
-    dom.explainHeatmapImg.src = study.gradcamHeatmap;
-    dom.explainOverlayBaseImg.src = study.dataUrl;
-    dom.explainOverlayHeatmapImg.src = study.gradcamHeatmap;
-
-    // Update Report View
-    dom.repStudyId.textContent = study.id;
-    dom.repDate.textContent = study.timestamp;
-    dom.repOriginalImg.src = study.dataUrl;
-    dom.repGradcamImg.src = study.gradcamHeatmap;
-    dom.repPredictedClass.textContent = meta.label;
-    dom.repConfidence.textContent = `${study.confidence.toFixed(1)}%`;
-    dom.repLatency.textContent = `${study.inferenceTimeMs} ms`;
-
-    dom.repProbTableBody.innerHTML = "";
-    sorted.forEach(([clsKey, probVal]) => {
-      const clsMeta = CLASS_META[clsKey] || { label: clsKey };
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><strong>${clsMeta.label}</strong></td>
-        <td class="mono">${probVal.toFixed(2)}%</td>
-        <td>
-          <div style="height:6px; background:#162231; border-radius:3px; overflow:hidden; width:120px;">
-            <div style="height:100%; width:${probVal}%; background:${clsMeta.color || "#39D5FF"};"></div>
+      sorted.forEach(([clsKey, probVal]) => {
+        const clsMeta = CLASS_META[clsKey] || { label: clsKey, color: "#39D5FF" };
+        const row = document.createElement("div");
+        row.className = "prob-row";
+        row.innerHTML = `
+          <div class="prob-row-header">
+            <span class="prob-class-name">${clsMeta.label}</span>
+            <span class="prob-class-val mono">${probVal.toFixed(1)}%</span>
           </div>
-        </td>
-      `;
-      dom.repProbTableBody.appendChild(tr);
-    });
+          <div class="prob-bar-track">
+            <div class="prob-bar-fill fill-${clsKey}" style="width: ${probVal}%"></div>
+          </div>
+        `;
+        dom.probBarsList.appendChild(row);
+      });
+    }
 
-    // Update Overview & History tables
+    if (dom.quickCamHeatmap) dom.quickCamHeatmap.src = study.gradcamHeatmap;
+    if (dom.explainOriginalImg) dom.explainOriginalImg.src = study.dataUrl;
+    if (dom.explainHeatmapImg) dom.explainHeatmapImg.src = study.gradcamHeatmap;
+    if (dom.explainOverlayBaseImg) dom.explainOverlayBaseImg.src = study.dataUrl;
+    if (dom.explainOverlayHeatmapImg) dom.explainOverlayHeatmapImg.src = study.gradcamHeatmap;
+
+    if (dom.repStudyId) dom.repStudyId.textContent = study.id;
+    if (dom.repDate) dom.repDate.textContent = study.timestamp;
+    if (dom.repOriginalImg) dom.repOriginalImg.src = study.dataUrl;
+    if (dom.repGradcamImg) dom.repGradcamImg.src = study.gradcamHeatmap;
+    if (dom.repPredictedClass) dom.repPredictedClass.textContent = meta.label;
+    if (dom.repConfidence) dom.repConfidence.textContent = `${study.confidence.toFixed(1)}%`;
+    if (dom.repLatency) dom.repLatency.textContent = `${study.inferenceTimeMs} ms`;
+
+    if (dom.repProbTableBody) {
+      dom.repProbTableBody.innerHTML = "";
+      const sorted = Object.entries(study.probabilities).sort((a, b) => b[1] - a[1]);
+      sorted.forEach(([clsKey, probVal]) => {
+        const clsMeta = CLASS_META[clsKey] || { label: clsKey };
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${clsMeta.label}</strong></td>
+          <td class="mono">${probVal.toFixed(2)}%</td>
+          <td>
+            <div style="height:6px; background:#162231; border-radius:3px; overflow:hidden; width:120px;">
+              <div style="height:100%; width:${probVal}%; background:${clsMeta.color || "#39D5FF"};"></div>
+            </div>
+          </td>
+        `;
+        dom.repProbTableBody.appendChild(tr);
+      });
+    }
+
     renderOverviewRecent();
     renderHistoryTable();
   }
 
   // =========================================================================
-  // VIEWER CONTROLS (ZOOM, BRIGHTNESS, CONTRAST, OPACITY, SLICES)
+  // VIEWER CONTROLS
   // =========================================================================
   function applyViewerTransforms() {
     const v = state.viewer;
     const transform = `scale(${v.zoom})`;
     const filter = `brightness(${v.brightness}%) contrast(${v.contrast}%)`;
 
-    dom.mriViewerImage.style.transform = transform;
-    dom.mriViewerImage.style.filter = filter;
+    if (dom.mriViewerImage) {
+      dom.mriViewerImage.style.transform = transform;
+      dom.mriViewerImage.style.filter = filter;
+    }
 
-    dom.mriViewerHeatmap.style.transform = transform;
-    dom.mriViewerHeatmap.style.opacity = v.camOpacity / 100;
+    if (dom.mriViewerHeatmap) {
+      dom.mriViewerHeatmap.style.transform = transform;
+      dom.mriViewerHeatmap.style.opacity = v.camOpacity / 100;
+    }
 
-    dom.hudZoomText.textContent = `ZOOM: ${Math.round(v.zoom * 100)}%`;
+    if (dom.hudZoomText) {
+      dom.hudZoomText.textContent = `ZOOM: ${Math.round(v.zoom * 100)}%`;
+    }
   }
 
-  dom.zoomInBtn.addEventListener("click", () => {
-    state.viewer.zoom = Math.min(state.viewer.zoom + 0.25, 3.0);
-    applyViewerTransforms();
-  });
+  if (dom.zoomInBtn) {
+    dom.zoomInBtn.addEventListener("click", () => {
+      state.viewer.zoom = Math.min(state.viewer.zoom + 0.25, 3.0);
+      applyViewerTransforms();
+    });
+  }
 
-  dom.zoomOutBtn.addEventListener("click", () => {
-    state.viewer.zoom = Math.max(state.viewer.zoom - 0.25, 0.5);
-    applyViewerTransforms();
-  });
+  if (dom.zoomOutBtn) {
+    dom.zoomOutBtn.addEventListener("click", () => {
+      state.viewer.zoom = Math.max(state.viewer.zoom - 0.25, 0.5);
+      applyViewerTransforms();
+    });
+  }
 
-  dom.zoomFitBtn.addEventListener("click", () => {
-    state.viewer.zoom = 1.0;
-    applyViewerTransforms();
-  });
+  if (dom.zoomFitBtn) {
+    dom.zoomFitBtn.addEventListener("click", () => {
+      state.viewer.zoom = 1.0;
+      applyViewerTransforms();
+    });
+  }
 
-  dom.resetViewerBtn.addEventListener("click", () => {
-    state.viewer = {
-      zoom: 1.0,
-      brightness: 100,
-      contrast: 100,
-      camOpacity: 0,
-      currentSlice: 1,
-      totalSlices: 4
-    };
-    dom.brightnessSlider.value = 100;
-    dom.contrastSlider.value = 100;
-    dom.camOpacitySlider.value = 0;
-    dom.sliceSlider.value = 1;
-    dom.sliceCounterText.textContent = "SLICE 01 / 04";
-    applyViewerTransforms();
-  });
+  if (dom.resetViewerBtn) {
+    dom.resetViewerBtn.addEventListener("click", () => {
+      state.viewer = {
+        zoom: 1.0,
+        brightness: 100,
+        contrast: 100,
+        camOpacity: 0,
+        currentSlice: 1,
+        totalSlices: 4
+      };
+      if (dom.brightnessSlider) dom.brightnessSlider.value = 100;
+      if (dom.contrastSlider) dom.contrastSlider.value = 100;
+      if (dom.camOpacitySlider) dom.camOpacitySlider.value = 0;
+      if (dom.sliceSlider) dom.sliceSlider.value = 1;
+      if (dom.sliceCounterText) dom.sliceCounterText.textContent = "SLICE 01 / 04";
+      applyViewerTransforms();
+    });
+  }
 
-  dom.fullscreenViewerBtn.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      dom.mriViewport.requestFullscreen?.().catch(() => {});
-    } else {
-      document.exitFullscreen?.().catch(() => {});
-    }
-  });
+  if (dom.fullscreenViewerBtn) {
+    dom.fullscreenViewerBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        dom.mriViewport?.requestFullscreen?.().catch(() => {});
+      } else {
+        document.exitFullscreen?.().catch(() => {});
+      }
+    });
+  }
 
-  dom.brightnessSlider.addEventListener("input", e => {
-    state.viewer.brightness = e.target.value;
-    applyViewerTransforms();
-  });
+  if (dom.brightnessSlider) {
+    dom.brightnessSlider.addEventListener("input", e => {
+      state.viewer.brightness = e.target.value;
+      applyViewerTransforms();
+    });
+  }
 
-  dom.contrastSlider.addEventListener("input", e => {
-    state.viewer.contrast = e.target.value;
-    applyViewerTransforms();
-  });
+  if (dom.contrastSlider) {
+    dom.contrastSlider.addEventListener("input", e => {
+      state.viewer.contrast = e.target.value;
+      applyViewerTransforms();
+    });
+  }
 
-  dom.camOpacitySlider.addEventListener("input", e => {
-    state.viewer.camOpacity = e.target.value;
-    applyViewerTransforms();
-  });
+  if (dom.camOpacitySlider) {
+    dom.camOpacitySlider.addEventListener("input", e => {
+      state.viewer.camOpacity = e.target.value;
+      applyViewerTransforms();
+    });
+  }
 
-  // Slice navigation
-  dom.sliceSlider.addEventListener("input", e => {
-    const slice = parseInt(e.target.value, 10);
-    state.viewer.currentSlice = slice;
-    dom.sliceCounterText.textContent = `SLICE ${String(slice).padStart(2, "0")} / 04`;
-  });
+  if (dom.sliceSlider) {
+    dom.sliceSlider.addEventListener("input", e => {
+      const slice = parseInt(e.target.value, 10);
+      state.viewer.currentSlice = slice;
+      if (dom.sliceCounterText) dom.sliceCounterText.textContent = `SLICE ${String(slice).padStart(2, "0")} / 04`;
+    });
+  }
 
-  dom.prevSliceBtn.addEventListener("click", () => {
-    if (state.viewer.currentSlice > 1) {
-      state.viewer.currentSlice--;
-      dom.sliceSlider.value = state.viewer.currentSlice;
-      dom.sliceCounterText.textContent = `SLICE ${String(state.viewer.currentSlice).padStart(2, "0")} / 04`;
-    }
-  });
+  if (dom.prevSliceBtn) {
+    dom.prevSliceBtn.addEventListener("click", () => {
+      if (state.viewer.currentSlice > 1) {
+        state.viewer.currentSlice--;
+        if (dom.sliceSlider) dom.sliceSlider.value = state.viewer.currentSlice;
+        if (dom.sliceCounterText) dom.sliceCounterText.textContent = `SLICE ${String(state.viewer.currentSlice).padStart(2, "0")} / 04`;
+      }
+    });
+  }
 
-  dom.nextSliceBtn.addEventListener("click", () => {
-    if (state.viewer.currentSlice < state.viewer.totalSlices) {
-      state.viewer.currentSlice++;
-      dom.sliceSlider.value = state.viewer.currentSlice;
-      dom.sliceCounterText.textContent = `SLICE ${String(state.viewer.currentSlice).padStart(2, "0")} / 04`;
-    }
-  });
+  if (dom.nextSliceBtn) {
+    dom.nextSliceBtn.addEventListener("click", () => {
+      if (state.viewer.currentSlice < state.viewer.totalSlices) {
+        state.viewer.currentSlice++;
+        if (dom.sliceSlider) dom.sliceSlider.value = state.viewer.currentSlice;
+        if (dom.sliceCounterText) dom.sliceCounterText.textContent = `SLICE ${String(state.viewer.currentSlice).padStart(2, "0")} / 04`;
+      }
+    });
+  }
 
-  // Explainability Opacity Slider
   if (dom.explainOpacitySlider) {
     dom.explainOpacitySlider.addEventListener("input", e => {
       const val = e.target.value;
-      dom.explainOpacityVal.textContent = `${val}%`;
-      dom.explainOverlayHeatmapImg.style.opacity = val / 100;
+      if (dom.explainOpacityVal) dom.explainOpacityVal.textContent = `${val}%`;
+      if (dom.explainOverlayHeatmapImg) dom.explainOverlayHeatmapImg.style.opacity = val / 100;
     });
   }
 
@@ -812,7 +807,6 @@
       }
     }
 
-    // If history is empty, populate 4 default baseline clinical samples
     if (state.studiesHistory.length === 0) {
       state.studiesHistory = [
         {
@@ -893,7 +887,6 @@
       dom.overviewRecentTbody.appendChild(tr);
     });
 
-    // Attach click handlers
     dom.overviewRecentTbody.querySelectorAll("[data-load-study]").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-load-study");
@@ -923,11 +916,11 @@
     }
 
     if (list.length === 0) {
-      dom.emptyHistoryState.hidden = false;
+      if (dom.emptyHistoryState) dom.emptyHistoryState.hidden = false;
       return;
     }
 
-    dom.emptyHistoryState.hidden = true;
+    if (dom.emptyHistoryState) dom.emptyHistoryState.hidden = true;
 
     list.forEach(item => {
       const meta = CLASS_META[item.prediction] || { label: item.prediction, badgeClass: "badge-cyan" };
@@ -962,10 +955,9 @@
     });
   }
 
-  // History Search and Filter Listeners
   if (dom.historySearchInput) {
     dom.historySearchInput.addEventListener("input", e => {
-      const activeFilter = dom.historyFilterPills.querySelector(".active")?.getAttribute("data-filter") || "all";
+      const activeFilter = dom.historyFilterPills?.querySelector(".active")?.getAttribute("data-filter") || "all";
       renderHistoryTable(activeFilter, e.target.value);
     });
   }
@@ -992,17 +984,14 @@
     });
   }
 
-  // Quick Report button
   if (dom.generateReportQuickBtn) {
     dom.generateReportQuickBtn.addEventListener("click", () => switchTab("reports"));
   }
 
-  // Print Report
   if (dom.printReportBtn) {
     dom.printReportBtn.addEventListener("click", () => window.print());
   }
 
-  // JSON Export
   if (dom.exportJsonReportBtn) {
     dom.exportJsonReportBtn.addEventListener("click", () => {
       if (!state.currentStudy) return;
@@ -1018,27 +1007,45 @@
   }
 
   // =========================================================================
-  // DISCLAIMER MODAL
+  // DISCLAIMER MODAL (EXPLICIT DISPLAY HANDLERS)
   // =========================================================================
-  if (dom.disclaimerModalBtn) {
-    dom.disclaimerModalBtn.addEventListener("click", () => {
+  function openDisclaimer() {
+    if (dom.disclaimerModal) {
       dom.disclaimerModal.hidden = false;
-    });
+      dom.disclaimerModal.style.display = "flex";
+    }
+  }
+
+  function closeDisclaimer() {
+    if (dom.disclaimerModal) {
+      dom.disclaimerModal.hidden = true;
+      dom.disclaimerModal.style.display = "none";
+    }
+  }
+
+  if (dom.disclaimerModalBtn) {
+    dom.disclaimerModalBtn.addEventListener("click", openDisclaimer);
   }
   if (dom.closeDisclaimerBtn) {
-    dom.closeDisclaimerBtn.addEventListener("click", () => {
-      dom.disclaimerModal.hidden = true;
-    });
+    dom.closeDisclaimerBtn.addEventListener("click", closeDisclaimer);
   }
   if (dom.ackDisclaimerBtn) {
-    dom.ackDisclaimerBtn.addEventListener("click", () => {
-      dom.disclaimerModal.hidden = true;
+    dom.ackDisclaimerBtn.addEventListener("click", closeDisclaimer);
+  }
+
+  // Close modal when clicking backdrop outside card
+  if (dom.disclaimerModal) {
+    dom.disclaimerModal.addEventListener("click", e => {
+      if (e.target === dom.disclaimerModal) closeDisclaimer();
     });
   }
 
   // =========================================================================
   // INITIALIZATION
   // =========================================================================
+  // Ensure modal is hidden initially
+  closeDisclaimer();
+
   loadInitialHistory();
   checkApiStatus();
   setInterval(checkApiStatus, 15000);
