@@ -1,0 +1,96 @@
+# ==============================
+# Python / FastAPI
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python cache / tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ==============================
+# FastAPI / Backend
+# ==============================
+*.log
+
+# Uploaded files / generated files
+uploads/
+temp/
+tmp/
+
+# ==============================
+# React / Node
+# ==============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# React build
+dist/
+build/
+.next/
+out/
+
+# Environment variables
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# ==============================
+# Machine Learning
+# ==============================
+# Ignore model checkpoints
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.keras
+
+# Ignore large datasets
+data/
+dataset/
+datasets/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ==============================
+# IDE / Editor
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# OS
+# ==============================
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Python distribution
+# ==============================
+*.egg-info/
+.eggs/
+dist/
+build/
