@@ -241,8 +241,37 @@
     disclaimerModalBtn: document.getElementById("disclaimerModalBtn"),
     closeDisclaimerBtn: document.getElementById("closeDisclaimerBtn"),
     ackDisclaimerBtn: document.getElementById("ackDisclaimerBtn"),
-    toastContainer: document.getElementById("toastContainer")
+    toastContainer: document.getElementById("toastContainer"),
+    themeToggleBtn: document.getElementById("themeToggleBtn"),
+    themeLabel: document.getElementById("themeLabel")
   };
+
+  // =========================================================================
+  // THEME CONTROLLER (DARK / LIGHT MODE)
+  // =========================================================================
+  function applyTheme(theme) {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+      if (dom.themeLabel) dom.themeLabel.textContent = "Dark Mode";
+      localStorage.setItem("neuroscan_theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      if (dom.themeLabel) dom.themeLabel.textContent = "Light Mode";
+      localStorage.setItem("neuroscan_theme", "dark");
+    }
+  }
+
+  const initialTheme = localStorage.getItem("neuroscan_theme") || "dark";
+  applyTheme(initialTheme);
+
+  if (dom.themeToggleBtn) {
+    dom.themeToggleBtn.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      applyTheme(newTheme);
+      showToast(`Switched to ${newTheme === "light" ? "Clinical Light" : "Dark Workstation"} theme`, "info");
+    });
+  }
 
   // =========================================================================
   // TOAST NOTIFICATIONS

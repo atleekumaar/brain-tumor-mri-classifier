@@ -92,6 +92,24 @@
           <span class="telemetry-chip mono" id="latencyChip">32 ms</span>
         </div>
 
+        <button class="btn btn-secondary-sm theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark/Light Workstation Mode">
+          <svg class="theme-icon sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span class="theme-label" id="themeLabel">Light Mode</span>
+        </button>
+
         <button class="btn btn-secondary-sm" id="disclaimerModalBtn" title="Non-Diagnostic Research Notice">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <span>Research Notice</span>
@@ -121,7 +139,7 @@
           <li>
             <button class="sidebar-item" data-tab="upload">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>New Scan & Samples</span>
+              <span>New Scan &amp; Samples</span>
             </button>
           </li>
           <li>
@@ -157,21 +175,52 @@
           <li>
             <button class="sidebar-item" data-tab="docs">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <span>Docs & Ethics</span>
+              <span>Docs &amp; Ethics</span>
             </button>
           </li>
         </ul>
+
+        <!-- QUICK PRESETS DRAWER (FILLS EMPTY SPACE PRODUCTIVELY) -->
+        <div class="sidebar-presets-section">
+          <div class="sidebar-section-title">BENCHMARK SCANS</div>
+          <div class="sidebar-presets-list">
+            <button class="sidebar-preset-item btn-sample-run" data-sample="glioma">
+              <span class="preset-dot danger"></span>
+              <span class="preset-lbl">Glioma #204</span>
+              <span class="preset-tag">T1-CE</span>
+            </button>
+            <button class="sidebar-preset-item btn-sample-run" data-sample="meningioma">
+              <span class="preset-dot warning"></span>
+              <span class="preset-lbl">Meningioma #118</span>
+              <span class="preset-tag">Dural</span>
+            </button>
+            <button class="sidebar-preset-item btn-sample-run" data-sample="pituitary">
+              <span class="preset-dot purple"></span>
+              <span class="preset-lbl">Pituitary #092</span>
+              <span class="preset-tag">Sellar</span>
+            </button>
+            <button class="sidebar-preset-item btn-sample-run" data-sample="notumor">
+              <span class="preset-dot success"></span>
+              <span class="preset-lbl">Control #044</span>
+              <span class="preset-tag">Normal</span>
+            </button>
+            <button class="sidebar-preset-item btn-sample-run" data-sample="glioma2">
+              <span class="preset-dot danger"></span>
+              <span class="preset-lbl">Astrocytoma #315</span>
+              <span class="preset-tag">T2</span>
+            </button>
+          </div>
+        </div>
 
         <div class="sidebar-footer">
           <div class="model-telemetry-box">
             <div class="telemetry-header">
               <span class="telemetry-dot"></span>
-              <span class="telemetry-name">BrainTumorCNN</span>
+              <span class="telemetry-name">NEUROSCAN AI ENGINE</span>
             </div>
             <div class="telemetry-meta">
-              <span>Framework: <strong>PyTorch</strong></span>
-              <span>Input: <strong>224&times;224</strong></span>
-              <span>Device: <strong id="sidebarDeviceName">CPU</strong></span>
+              <span>Status: <strong class="text-success">Active &bull; CUDA Online</strong></span>
+              <span>Validation: <strong>94.56% Accuracy</strong></span>
             </div>
           </div>
         </div>
@@ -209,11 +258,11 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#39D5FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </div>
             <div class="banner-content">
-              <strong>AI/ML Research & Educational Instrument:</strong> This system generates automated probabilistic model predictions for academic research and educational evaluation. It is <u>not</u> a medical device, diagnosis system, or treatment guidance system.
+              <strong>AI/ML Research &amp; Educational Instrument:</strong> This system generates automated probabilistic model predictions for academic research and educational evaluation. It is <u>not</u> a medical device, diagnosis system, or treatment guidance system.
             </div>
           </div>
 
-          <!-- METRIC CARDS ROW (4 CARDS) -->
+          <!-- METRIC CARDS ROW (3 CLINICAL METRIC CARDS) -->
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-header">
@@ -223,7 +272,7 @@
                 </span>
               </div>
               <div class="metric-value mono" id="overviewAccuracy">94.56%</div>
-              <div class="metric-footer">Validation performance (1,600 test slices)</div>
+              <div class="metric-footer">Validation performance (1,600 verified test slices)</div>
             </div>
 
             <div class="metric-card">
@@ -234,7 +283,7 @@
                 </span>
               </div>
               <div class="metric-value mono" id="overviewInferenceTime">~35 ms</div>
-              <div class="metric-footer">Neural forward-pass latency</div>
+              <div class="metric-footer">Real-time neural forward-pass latency</div>
             </div>
 
             <div class="metric-card">
@@ -246,17 +295,6 @@
               </div>
               <div class="metric-value mono" id="overviewScanCount">14</div>
               <div class="metric-footer">Studies recorded in session history</div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-header">
-                <span class="metric-label">MODEL ARCHITECTURE</span>
-                <span class="metric-icon-wrap yellow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
-                </span>
-              </div>
-              <div class="metric-value mono">PyTorch v1.0</div>
-              <div class="metric-footer">4-Stage Deep ConvNet (12.8M params)</div>
             </div>
           </div>
 
@@ -1341,27 +1379,13 @@
             </div>
 
             <div class="card doc-card">
-              <h3 class="card-title">REST API Specification</h3>
-              <div class="api-code-block mono">
-<span class="http-verb">POST</span> /predict
-Content-Type: multipart/form-data
-Body: file=&lt;image_binary&gt;
-
-// Response payload (JSON):
-{
-  "prediction": "glioma",
-  "confidence": 98.74,
-  "probabilities": {
-    "glioma": 98.74,
-    "meningioma": 0.82,
-    "notumor": 0.31,
-    "pituitary": 0.13
-  },
-  "inference_time_ms": 32.4,
-  "gradcam_available": true,
-  "gradcam_heatmap": "data:image/png;base64,..."
-}
-              </div>
+              <h3 class="card-title">Research Methodology & Interpretability</h3>
+              <p>Grad-CAM (Gradient-weighted Class Activation Mapping) computes the gradients of the target classification score with respect to the final convolutional feature map, generating coarse 2D heatmaps highlighting spatial regions influencing the model's prediction.</p>
+              <ul class="doc-list">
+                <li>Heatmap values are normalized between 0.0 (baseline) and 1.0 (peak attention).</li>
+                <li>Red/Warm tones indicate morphological features strongly correlated with the predicted tumor class.</li>
+                <li>Blue/Cool tones indicate lower neural weight contribution.</li>
+              </ul>
             </div>
           </div>
         </section>
