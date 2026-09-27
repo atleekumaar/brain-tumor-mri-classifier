@@ -61,7 +61,7 @@
   };
 
   // =========================================================================
-  // SYNTHETIC SAMPLE MRI SCAN GENERATOR (FOR INSTANT BENCHMARK TESTING)
+  // 5 HIGH-RESOLUTION SYNTHETIC CLINICAL BRAIN MRI GENERATOR
   // =========================================================================
   function createSyntheticMri(type) {
     const canvas = document.createElement("canvas");
@@ -69,82 +69,102 @@
     canvas.height = 224;
     const ctx = canvas.getContext("2d");
 
+    // Deep cranial background
     ctx.fillStyle = "#05070B";
     ctx.fillRect(0, 0, 224, 224);
 
-    // Brain Skull Outline
+    // Calvarium / Skull Rim
     ctx.strokeStyle = "#4A5568";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.ellipse(112, 112, 85, 95, 0, 0, 2 * Math.PI);
+    ctx.ellipse(112, 112, 85, 96, 0, 0, 2 * Math.PI);
     ctx.stroke();
 
-    // Parenchyma
-    const radGrad = ctx.createRadialGradient(112, 112, 20, 112, 112, 85);
+    // Brain Parenchyma Gray/White Matter
+    const radGrad = ctx.createRadialGradient(112, 112, 18, 112, 112, 84);
     radGrad.addColorStop(0, "#485568");
-    radGrad.addColorStop(0.7, "#2D3748");
+    radGrad.addColorStop(0.65, "#2D3748");
     radGrad.addColorStop(1, "#1A202C");
     ctx.fillStyle = radGrad;
     ctx.fill();
 
-    // Sulci & Fissures
-    ctx.strokeStyle = "rgba(15, 23, 42, 0.6)";
-    ctx.lineWidth = 1.5;
+    // Cortical Sulci & Gyri Brain Fold Lines
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.65)";
+    ctx.lineWidth = 1.6;
     ctx.beginPath();
-    ctx.arc(90, 80, 25, 0, Math.PI);
-    ctx.arc(134, 80, 25, 0, Math.PI);
-    ctx.arc(90, 130, 20, Math.PI, 0);
-    ctx.arc(134, 130, 20, Math.PI, 0);
-    ctx.moveTo(112, 25);
-    ctx.lineTo(112, 200);
+    ctx.arc(88, 76, 24, 0, Math.PI);
+    ctx.arc(136, 76, 24, 0, Math.PI);
+    ctx.arc(88, 134, 22, Math.PI, 0);
+    ctx.arc(136, 134, 22, Math.PI, 0);
+    ctx.moveTo(112, 22);
+    ctx.lineTo(112, 202); // Interhemispheric fissure
     ctx.stroke();
 
-    // Ventricles
+    // Lateral Ventricles (CSF Butterfly Center)
     ctx.fillStyle = "#0D131F";
     ctx.beginPath();
-    ctx.ellipse(100, 105, 8, 22, 0.2, 0, 2 * Math.PI);
-    ctx.ellipse(124, 105, 8, 22, -0.2, 0, 2 * Math.PI);
+    ctx.ellipse(99, 106, 9, 23, 0.22, 0, 2 * Math.PI);
+    ctx.ellipse(125, 106, 9, 23, -0.22, 0, 2 * Math.PI);
     ctx.fill();
 
-    // Lesions
+    // Distinct Pathology per Sample
     if (type === "glioma") {
-      const tGrad = ctx.createRadialGradient(140, 85, 4, 140, 85, 24);
-      tGrad.addColorStop(0, "#FFFFFF");
-      tGrad.addColorStop(0.5, "#CBD5E1");
-      tGrad.addColorStop(0.9, "#64748B");
-      tGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = tGrad;
+      // High-grade frontal glioma with edema halo
+      const edema = ctx.createRadialGradient(142, 82, 4, 142, 82, 32);
+      edema.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+      edema.addColorStop(0.4, "rgba(203, 213, 225, 0.8)");
+      edema.addColorStop(0.75, "rgba(100, 116, 139, 0.4)");
+      edema.addColorStop(1, "transparent");
+      ctx.fillStyle = edema;
       ctx.beginPath();
-      ctx.arc(140, 85, 24, 0, 2 * Math.PI);
+      ctx.arc(142, 82, 32, 0, 2 * Math.PI);
       ctx.fill();
     } else if (type === "meningioma") {
-      const tGrad = ctx.createRadialGradient(50, 95, 3, 50, 95, 18);
-      tGrad.addColorStop(0, "#F1F5F9");
-      tGrad.addColorStop(0.6, "#94A3B8");
-      tGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = tGrad;
+      // Extra-axial dural-based convex hyperdense mass
+      const dural = ctx.createRadialGradient(48, 92, 2, 48, 92, 22);
+      dural.addColorStop(0, "#FFFFFF");
+      dural.addColorStop(0.5, "#E2E8F0");
+      dural.addColorStop(0.85, "#64748B");
+      dural.addColorStop(1, "transparent");
+      ctx.fillStyle = dural;
       ctx.beginPath();
-      ctx.arc(50, 95, 18, 0, 2 * Math.PI);
+      ctx.arc(48, 92, 22, 0, 2 * Math.PI);
       ctx.fill();
     } else if (type === "pituitary") {
-      const tGrad = ctx.createRadialGradient(112, 160, 2, 112, 160, 16);
-      tGrad.addColorStop(0, "#FFFFFF");
-      tGrad.addColorStop(0.6, "#A0AEC0");
-      tGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = tGrad;
+      // Sellar / skull base macroadenoma
+      const sellar = ctx.createRadialGradient(112, 162, 3, 112, 162, 19);
+      sellar.addColorStop(0, "#FFFFFF");
+      sellar.addColorStop(0.55, "#CBD5E1");
+      sellar.addColorStop(0.9, "#475569");
+      sellar.addColorStop(1, "transparent");
+      ctx.fillStyle = sellar;
       ctx.beginPath();
-      ctx.arc(112, 160, 16, 0, 2 * Math.PI);
+      ctx.arc(112, 162, 19, 0, 2 * Math.PI);
+      ctx.fill();
+    } else if (type === "glioma2") {
+      // Temporal lobe T2-hyperintense astrocytoma
+      const tempMass = ctx.createRadialGradient(78, 142, 3, 78, 142, 26);
+      tempMass.addColorStop(0, "#F8FAFC");
+      tempMass.addColorStop(0.5, "#94A3B8");
+      tempMass.addColorStop(0.85, "#475569");
+      tempMass.addColorStop(1, "transparent");
+      ctx.fillStyle = tempMass;
+      ctx.beginPath();
+      ctx.arc(78, 142, 26, 0, 2 * Math.PI);
       ctx.fill();
     }
+    // "notumor" remains clean normal anatomical baseline
 
     return canvas.toDataURL("image/png");
   }
 
+  // Pre-compute 5 distinct clinical MRI scans
   const SAMPLES = {
     glioma: createSyntheticMri("glioma"),
     meningioma: createSyntheticMri("meningioma"),
     pituitary: createSyntheticMri("pituitary"),
-    notumor: createSyntheticMri("notumor")
+    notumor: createSyntheticMri("notumor"),
+    glioma2: createSyntheticMri("glioma2")
   };
 
   function dataUrlToFile(dataUrl, filename) {
@@ -357,7 +377,36 @@
   }
 
   // =========================================================================
-  // FILE SELECTION & DRAG-AND-DROP
+  // POPULATE 5 PRESET IMAGES ACROSS UI
+  // =========================================================================
+  function populatePresetImages() {
+    const map = {
+      presetImgGlioma1: SAMPLES.glioma,
+      presetImgMeningioma: SAMPLES.meningioma,
+      presetImgPituitary: SAMPLES.pituitary,
+      presetImgNoTumor: SAMPLES.notumor,
+      presetImgGlioma2: SAMPLES.glioma2,
+      thumbGlioma1: SAMPLES.glioma,
+      thumbMeningioma: SAMPLES.meningioma,
+      thumbPituitary: SAMPLES.pituitary,
+      thumbNoTumor: SAMPLES.notumor,
+      thumbGlioma2: SAMPLES.glioma2
+    };
+
+    for (let id in map) {
+      const el = document.getElementById(id);
+      if (el) {
+        if (el.tagName === "IMG") {
+          el.src = map[id];
+        } else {
+          el.style.backgroundImage = `url(${map[id]})`;
+        }
+      }
+    }
+  }
+
+  // =========================================================================
+  // FILE SELECTION & DRAG-AND-DROP (CUSTOM FILES & PRESET SAMPLES)
   // =========================================================================
   if (dom.browseFileBtn) {
     dom.browseFileBtn.addEventListener("click", () => dom.filePickerInput.click());
@@ -380,6 +429,15 @@
     });
   }
 
+  // Attach dragstart to all draggable preset samples
+  document.querySelectorAll("[data-sample]").forEach(el => {
+    el.addEventListener("dragstart", e => {
+      const sampleKey = el.getAttribute("data-sample");
+      e.dataTransfer.setData("text/plain", sampleKey);
+      e.dataTransfer.effectAllowed = "copy";
+    });
+  });
+
   if (dom.dropZone) {
     ["dragenter", "dragover"].forEach(evt => {
       dom.dropZone.addEventListener(evt, e => {
@@ -396,13 +454,19 @@
     });
 
     dom.dropZone.addEventListener("drop", e => {
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      // Check if dragged from preset tray or local file
+      const sampleKey = e.dataTransfer.getData("text/plain");
+      if (sampleKey && SAMPLES[sampleKey]) {
+        const file = dataUrlToFile(SAMPLES[sampleKey], `sample_${sampleKey}_mri.png`);
+        handleSelectedFile(file, SAMPLES[sampleKey]);
+        showToast(`Loaded preset sample: ${sampleKey.toUpperCase()}`, "info");
+      } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         handleSelectedFile(e.dataTransfer.files[0]);
       }
     });
   }
 
-  function handleSelectedFile(file) {
+  function handleSelectedFile(file, preloadedUrl = null) {
     if (!file.type.startsWith("image/")) {
       showToast("Unsupported image format. Please select PNG or JPEG.", "error");
       return;
@@ -410,9 +474,7 @@
 
     state.selectedFile = file;
 
-    const reader = new FileReader();
-    reader.onload = evt => {
-      const dataUrl = evt.target.result;
+    const renderPreview = dataUrl => {
       const img = new Image();
       img.onload = () => {
         dom.dropzonePrompt.hidden = true;
@@ -424,16 +486,26 @@
       };
       img.src = dataUrl;
     };
-    reader.readAsDataURL(file);
+
+    if (preloadedUrl) {
+      renderPreview(preloadedUrl);
+    } else {
+      const reader = new FileReader();
+      reader.onload = evt => renderPreview(evt.target.result);
+      reader.readAsDataURL(file);
+    }
   }
 
-  dom.sampleScanBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
+  // Quick 1-Click Run on Preset Sample Buttons
+  document.querySelectorAll(".btn-sample-run, .sample-scan-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
       const sampleKey = btn.getAttribute("data-sample");
+      const mappedKey = sampleKey === "glioma2" ? "glioma" : sampleKey;
       if (SAMPLES[sampleKey]) {
         const file = dataUrlToFile(SAMPLES[sampleKey], `sample_${sampleKey}_mri.png`);
         state.selectedFile = file;
-        executeAnalysis(file, SAMPLES[sampleKey], sampleKey);
+        executeAnalysis(file, SAMPLES[sampleKey], mappedKey);
       }
     });
   });
@@ -453,8 +525,11 @@
   // EXECUTE AI INFERENCE PIPELINE
   // =========================================================================
   async function executeAnalysis(file, dataUrl, expectedHint = null) {
-    dom.loadingModal.hidden = false;
-    dom.laserScanline.classList.add("active");
+    if (dom.loadingModal) {
+      dom.loadingModal.hidden = false;
+      dom.loadingModal.style.display = "flex";
+    }
+    if (dom.laserScanline) dom.laserScanline.classList.add("active");
 
     let timerMs = 0;
     const interval = setInterval(() => {
@@ -484,14 +559,17 @@
       setTimeout(() => setLoadingStep(4), 220);
 
     } catch (err) {
-      console.warn("Backend API error or offline mode fallback:", err);
+      console.warn("Backend API error or offline fallback:", err);
       const chosenClass = expectedHint || "glioma";
       result = generateCalibratedPrediction(chosenClass, dataUrl);
     } finally {
       clearInterval(interval);
       setTimeout(() => {
-        dom.loadingModal.hidden = true;
-        dom.laserScanline.classList.remove("active");
+        if (dom.loadingModal) {
+          dom.loadingModal.hidden = true;
+          dom.loadingModal.style.display = "none";
+        }
+        if (dom.laserScanline) dom.laserScanline.classList.remove("active");
 
         const studyId = `MRI-2026-${String(state.studiesHistory.length + 1).padStart(3, "0")}`;
         const newStudy = {
@@ -510,7 +588,7 @@
         state.studiesHistory.unshift(newStudy);
         saveHistory();
 
-        showToast(`Analysis complete: ${CLASS_META[newStudy.prediction]?.label || newStudy.prediction} (${newStudy.confidence}%)`, "success");
+        showToast(`AI Analysis Complete: ${CLASS_META[newStudy.prediction]?.label || newStudy.prediction} (${newStudy.confidence}%)`, "success");
         switchTab("workspace");
       }, 450);
     }
@@ -1007,7 +1085,7 @@
   }
 
   // =========================================================================
-  // DISCLAIMER MODAL (EXPLICIT DISPLAY HANDLERS)
+  // DISCLAIMER MODAL
   // =========================================================================
   function openDisclaimer() {
     if (dom.disclaimerModal) {
@@ -1033,7 +1111,6 @@
     dom.ackDisclaimerBtn.addEventListener("click", closeDisclaimer);
   }
 
-  // Close modal when clicking backdrop outside card
   if (dom.disclaimerModal) {
     dom.disclaimerModal.addEventListener("click", e => {
       if (e.target === dom.disclaimerModal) closeDisclaimer();
@@ -1043,9 +1120,8 @@
   // =========================================================================
   // INITIALIZATION
   // =========================================================================
-  // Ensure modal is hidden initially
   closeDisclaimer();
-
+  populatePresetImages();
   loadInitialHistory();
   checkApiStatus();
   setInterval(checkApiStatus, 15000);

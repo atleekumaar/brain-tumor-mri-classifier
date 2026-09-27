@@ -59,6 +59,10 @@
           <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
           Overview
         </button>
+        <button class="nav-link" data-tab="upload">
+          <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          New Scan & Samples
+        </button>
         <button class="nav-link" data-tab="workspace">
           <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="3"/></svg>
           Workspace
@@ -95,7 +99,7 @@
 
         <button class="btn btn-primary-sm" id="quickAnalyzeBtn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <span>+ Analyze New MRI</span>
+          <span>+ Analyze MRI</span>
         </button>
       </div>
     </header>
@@ -117,7 +121,7 @@
           <li>
             <button class="sidebar-item" data-tab="upload">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>New Scan</span>
+              <span>New Scan & Samples</span>
             </button>
           </li>
           <li>
@@ -260,53 +264,62 @@
           <div class="overview-split-layout">
             <div class="card overview-action-card">
               <div class="card-header">
-                <h3 class="card-title">Quick Study Launcher</h3>
-                <span class="badge badge-cyan">Interactive</span>
+                <h3 class="card-title">Quick Study Launcher (5 Clinical Benchmark Cases)</h3>
+                <span class="badge badge-cyan">Instant Test</span>
               </div>
-              <p class="card-desc">Upload a patient MRI study or evaluate with instant calibrated benchmark cases:</p>
+              <p class="card-desc">Click or drag any preset case below to immediately load and evaluate through the neural classifier:</p>
               
-              <div class="sample-scans-grid">
-                <button class="sample-scan-btn" data-sample="glioma">
-                  <div class="sample-scan-thumb glioma-thumb"></div>
+              <div class="sample-scans-grid five-grid">
+                <button class="sample-scan-btn" data-sample="glioma" draggable="true">
+                  <div class="sample-scan-thumb glioma-thumb" id="thumbGlioma1"></div>
                   <div class="sample-scan-info">
-                    <span class="sample-name">Glioma Case #204</span>
-                    <span class="sample-meta mono">Axial T1 &middot; 224&times;224</span>
+                    <span class="sample-name">Glioma #204</span>
+                    <span class="sample-meta mono">Frontal Mass &middot; T1-CE</span>
                   </div>
                   <span class="badge badge-danger">Glioma</span>
                 </button>
 
-                <button class="sample-scan-btn" data-sample="meningioma">
-                  <div class="sample-scan-thumb meningioma-thumb"></div>
+                <button class="sample-scan-btn" data-sample="meningioma" draggable="true">
+                  <div class="sample-scan-thumb meningioma-thumb" id="thumbMeningioma"></div>
                   <div class="sample-scan-info">
-                    <span class="sample-name">Meningioma Case #118</span>
-                    <span class="sample-meta mono">Axial T1 &middot; 224&times;224</span>
+                    <span class="sample-name">Meningioma #118</span>
+                    <span class="sample-meta mono">Dural Convexity</span>
                   </div>
                   <span class="badge badge-warning">Meningioma</span>
                 </button>
 
-                <button class="sample-scan-btn" data-sample="pituitary">
-                  <div class="sample-scan-thumb pituitary-thumb"></div>
+                <button class="sample-scan-btn" data-sample="pituitary" draggable="true">
+                  <div class="sample-scan-thumb pituitary-thumb" id="thumbPituitary"></div>
                   <div class="sample-scan-info">
-                    <span class="sample-name">Pituitary Case #092</span>
-                    <span class="sample-meta mono">Coronal/Axial &middot; 224&times;224</span>
+                    <span class="sample-name">Pituitary #092</span>
+                    <span class="sample-meta mono">Sellar Adenoma</span>
                   </div>
                   <span class="badge badge-purple">Pituitary</span>
                 </button>
 
-                <button class="sample-scan-btn" data-sample="notumor">
-                  <div class="sample-scan-thumb notumor-thumb"></div>
+                <button class="sample-scan-btn" data-sample="notumor" draggable="true">
+                  <div class="sample-scan-thumb notumor-thumb" id="thumbNoTumor"></div>
                   <div class="sample-scan-info">
-                    <span class="sample-name">Control Slice #044</span>
-                    <span class="sample-meta mono">Axial T2 &middot; 224&times;224</span>
+                    <span class="sample-name">Control #044</span>
+                    <span class="sample-meta mono">Healthy Parenchyma</span>
                   </div>
                   <span class="badge badge-success">No Tumor</span>
+                </button>
+
+                <button class="sample-scan-btn" data-sample="glioma2" draggable="true">
+                  <div class="sample-scan-thumb glioma-thumb" id="thumbGlioma2"></div>
+                  <div class="sample-scan-info">
+                    <span class="sample-name">Astrocytoma #315</span>
+                    <span class="sample-meta mono">Temporal Lobe T2</span>
+                  </div>
+                  <span class="badge badge-danger">Glioma (T2)</span>
                 </button>
               </div>
 
               <div class="card-footer-cta">
                 <button class="btn btn-primary btn-block" data-tab="upload">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <span>Upload Custom MRI Scan</span>
+                  <span>Upload Custom MRI Scan or Use Tray</span>
                 </button>
               </div>
             </div>
@@ -339,13 +352,13 @@
 
 
         <!-- ============================================== -->
-        <!-- VIEW 2: NEW SCAN / UPLOAD PAGE                 -->
+        <!-- VIEW 2: NEW SCAN / UPLOAD & 5-SAMPLE TRAY      -->
         <!-- ============================================== -->
         <section class="tab-view" id="view-upload">
           <div class="view-header">
             <div>
-              <h1 class="view-title">Analyze New MRI</h1>
-              <p class="view-subtitle">Upload a brain MRI slice for AI-assisted neural classification and explainability mapping.</p>
+              <h1 class="view-title">Analyze New MRI Scan</h1>
+              <p class="view-subtitle">Upload your own brain MRI file (JPG/PNG), or select from the 5 clinical sample scans below for instant drag-and-drop evaluation.</p>
             </div>
           </div>
 
@@ -362,19 +375,19 @@
                     <line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                 </div>
-                <h3 class="dropzone-title">Drop brain MRI image here</h3>
-                <p class="dropzone-desc">Drag and drop an axial or coronal slice, or browse your local filesystem</p>
+                <h3 class="dropzone-title">Drop your brain MRI image here</h3>
+                <p class="dropzone-desc">Drag and drop a file from your computer, or drag any sample scan from below</p>
                 
                 <button class="btn btn-secondary" id="browseFileBtn" type="button">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                  <span>Browse Files</span>
+                  <span>Browse Local Computer</span>
                 </button>
 
                 <div class="dropzone-formats">
                   <span class="format-pill">PNG</span>
                   <span class="format-pill">JPG</span>
                   <span class="format-pill">JPEG</span>
-                  <span class="format-hint mono">&middot; Max 20MB &middot; Resized to 224&times;224 for CNN</span>
+                  <span class="format-hint mono">&middot; Max 20MB &middot; Automatically Normalized to 224&times;224 for PyTorch</span>
                 </div>
               </div>
 
@@ -392,7 +405,7 @@
                 <div class="preview-stage-right">
                   <div class="stage-info-header">
                     <h4 class="stage-filename" id="stageFilename">scan-slice-axial-01.png</h4>
-                    <span class="badge badge-success" id="stageStatusBadge">Format Verified</span>
+                    <span class="badge badge-success" id="stageStatusBadge">Ready for Analysis</span>
                   </div>
 
                   <div class="stage-meta-grid">
@@ -425,22 +438,109 @@
               </div>
             </div>
 
+            <!-- ============================================== -->
+            <!-- 5 PRE-LOADED CLINICAL SCAN SAMPLES TRAY        -->
+            <!-- ============================================== -->
+            <div class="card preset-samples-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">5 Pre-Loaded Brain Tumor MRI Samples (No file needed)</h3>
+                  <p class="card-sub-mono mono">Click any scan to analyze instantly, or drag it into the dropzone above</p>
+                </div>
+                <span class="badge badge-cyan">Drag &amp; Drop Enabled</span>
+              </div>
+
+              <div class="preset-samples-grid">
+                
+                <!-- Sample 1: Glioma -->
+                <div class="preset-sample-box" data-sample="glioma" draggable="true" title="Drag into dropzone or click to test">
+                  <div class="preset-sample-preview-wrap">
+                    <img class="preset-sample-img" id="presetImgGlioma1" src="" alt="Glioma">
+                    <span class="preset-badge badge-danger">Glioma</span>
+                    <div class="drag-handle-hint">&equiv; Drag</div>
+                  </div>
+                  <div class="preset-sample-details">
+                    <h5 class="preset-title">01. Glioma Case #204</h5>
+                    <span class="preset-sub mono">Axial T1 &middot; Frontal Lobe</span>
+                    <button class="btn-sample-run" data-sample="glioma">⚡ Test Scan</button>
+                  </div>
+                </div>
+
+                <!-- Sample 2: Meningioma -->
+                <div class="preset-sample-box" data-sample="meningioma" draggable="true" title="Drag into dropzone or click to test">
+                  <div class="preset-sample-preview-wrap">
+                    <img class="preset-sample-img" id="presetImgMeningioma" src="" alt="Meningioma">
+                    <span class="preset-badge badge-warning">Meningioma</span>
+                    <div class="drag-handle-hint">&equiv; Drag</div>
+                  </div>
+                  <div class="preset-sample-details">
+                    <h5 class="preset-title">02. Meningioma #118</h5>
+                    <span class="preset-sub mono">Extra-Axial Dural Mass</span>
+                    <button class="btn-sample-run" data-sample="meningioma">⚡ Test Scan</button>
+                  </div>
+                </div>
+
+                <!-- Sample 3: Pituitary -->
+                <div class="preset-sample-box" data-sample="pituitary" draggable="true" title="Drag into dropzone or click to test">
+                  <div class="preset-sample-preview-wrap">
+                    <img class="preset-sample-img" id="presetImgPituitary" src="" alt="Pituitary">
+                    <span class="preset-badge badge-purple">Pituitary</span>
+                    <div class="drag-handle-hint">&equiv; Drag</div>
+                  </div>
+                  <div class="preset-sample-details">
+                    <h5 class="preset-title">03. Pituitary #092</h5>
+                    <span class="preset-sub mono">Sellar Region Adenoma</span>
+                    <button class="btn-sample-run" data-sample="pituitary">⚡ Test Scan</button>
+                  </div>
+                </div>
+
+                <!-- Sample 4: No Tumor Control -->
+                <div class="preset-sample-box" data-sample="notumor" draggable="true" title="Drag into dropzone or click to test">
+                  <div class="preset-sample-preview-wrap">
+                    <img class="preset-sample-img" id="presetImgNoTumor" src="" alt="No Tumor">
+                    <span class="preset-badge badge-success">No Tumor</span>
+                    <div class="drag-handle-hint">&equiv; Drag</div>
+                  </div>
+                  <div class="preset-sample-details">
+                    <h5 class="preset-title">04. Normal Brain #044</h5>
+                    <span class="preset-sub mono">Healthy Control Slice</span>
+                    <button class="btn-sample-run" data-sample="notumor">⚡ Test Scan</button>
+                  </div>
+                </div>
+
+                <!-- Sample 5: Astrocytoma T2 -->
+                <div class="preset-sample-box" data-sample="glioma2" draggable="true" title="Drag into dropzone or click to test">
+                  <div class="preset-sample-preview-wrap">
+                    <img class="preset-sample-img" id="presetImgGlioma2" src="" alt="Astrocytoma">
+                    <span class="preset-badge badge-danger">Glioma (T2)</span>
+                    <div class="drag-handle-hint">&equiv; Drag</div>
+                  </div>
+                  <div class="preset-sample-details">
+                    <h5 class="preset-title">05. Astrocytoma #315</h5>
+                    <span class="preset-sub mono">Temporal Hyperintensity</span>
+                    <button class="btn-sample-run" data-sample="glioma2">⚡ Test Scan</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             <!-- Upload Guidelines -->
             <div class="upload-guidelines-grid">
               <div class="guide-card">
                 <div class="guide-num">01</div>
-                <h4>Axial / Coronal View</h4>
-                <p>Ensure standard brain MRI axial or coronal slices for optimal model feature extraction.</p>
+                <h4>Drag &amp; Drop or Upload</h4>
+                <p>Upload a custom JPG/PNG slice from your system or drag any of the 5 pre-loaded clinical scans directly into the dropzone.</p>
               </div>
               <div class="guide-card">
                 <div class="guide-num">02</div>
                 <h4>Pre-Processing Pipeline</h4>
-                <p>Input images are automatically resized to 224&times;224 and normalized using ImageNet distribution stats.</p>
+                <p>Input images are automatically normalized using PyTorch ImageNet mean &amp; std distribution parameters.</p>
               </div>
               <div class="guide-card">
                 <div class="guide-num">03</div>
-                <h4>Explainability Heatmap</h4>
-                <p>Grad-CAM class activation mapping computes salient neural regions in real time.</p>
+                <h4>Grad-CAM Explainability</h4>
+                <p>The system visualizes salient convolutional activation maps (layer <code>features[9]</code>) in real time.</p>
               </div>
             </div>
           </div>
@@ -457,7 +557,7 @@
             <aside class="panel workspace-left-panel">
               <div class="panel-header">
                 <div class="panel-tag"><span>01</span> CURRENT STUDY</div>
-                <button class="btn-icon" id="panelChangeScanBtn" title="Upload Another Scan">
+                <button class="btn-icon" id="panelChangeScanBtn" title="Upload or Change Scan">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </button>
               </div>
@@ -490,7 +590,7 @@
                   <div class="meta-row">
                     <span class="meta-k">Inference Status</span>
                     <span class="meta-v">
-                      <span class="status-pill status-ready" id="studyStatusPill">Ready for analysis</span>
+                      <span class="status-pill status-ready" id="studyStatusPill">Analysis Complete</span>
                     </span>
                   </div>
                   <div class="meta-row">
@@ -525,7 +625,7 @@
                 <div class="panel-bottom-actions">
                   <button class="btn btn-secondary btn-block" id="workspaceNewScanBtn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    <span>Change Scan</span>
+                    <span>Upload or Pick Sample</span>
                   </button>
                 </div>
               </div>
@@ -571,8 +671,8 @@
                       <path d="M32 18c-5 3-9 9-9 14s4 11 9 14M32 18c5 3 9 9 9 14s-4 11-9 14M16 28h32M16 36h32" stroke="#7C6CFF" stroke-width="1.2" opacity="0.4"/>
                     </svg>
                     <p class="empty-title">No MRI Slice Loaded</p>
-                    <p class="empty-sub">Select a sample case or upload a new scan to begin analysis</p>
-                    <button class="btn btn-primary-sm" data-tab="upload">+ Upload Scan</button>
+                    <p class="empty-sub">Select a sample case below or upload a new scan to begin analysis</p>
+                    <button class="btn btn-primary-sm" data-tab="upload">+ Pick a Sample / Upload</button>
                   </div>
 
                   <!-- Active MRI Image -->
@@ -666,45 +766,6 @@
                   
                   <div class="prob-bars-list" id="probBarsList">
                     <!-- Dynamic Prob Rows -->
-                    <div class="prob-row" data-cls="glioma">
-                      <div class="prob-row-header">
-                        <span class="prob-class-name">Glioma</span>
-                        <span class="prob-class-val mono">94.7%</span>
-                      </div>
-                      <div class="prob-bar-track">
-                        <div class="prob-bar-fill fill-glioma" style="width: 94.7%"></div>
-                      </div>
-                    </div>
-
-                    <div class="prob-row" data-cls="meningioma">
-                      <div class="prob-row-header">
-                        <span class="prob-class-name">Meningioma</span>
-                        <span class="prob-class-val mono">3.1%</span>
-                      </div>
-                      <div class="prob-bar-track">
-                        <div class="prob-bar-fill fill-meningioma" style="width: 3.1%"></div>
-                      </div>
-                    </div>
-
-                    <div class="prob-row" data-cls="pituitary">
-                      <div class="prob-row-header">
-                        <span class="prob-class-name">Pituitary</span>
-                        <span class="prob-class-val mono">1.4%</span>
-                      </div>
-                      <div class="prob-bar-track">
-                        <div class="prob-bar-fill fill-pituitary" style="width: 1.4%"></div>
-                      </div>
-                    </div>
-
-                    <div class="prob-row" data-cls="notumor">
-                      <div class="prob-row-header">
-                        <span class="prob-class-name">No Tumor</span>
-                        <span class="prob-class-val mono">0.8%</span>
-                      </div>
-                      <div class="prob-bar-track">
-                        <div class="prob-bar-fill fill-notumor" style="width: 0.8%"></div>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -841,7 +902,7 @@
             <div class="explain-guide-grid">
               <div class="guide-item">
                 <div class="guide-lead-title">What is Grad-CAM?</div>
-                <p>Gradient-weighted Class Activation Mapping computes the gradients of the predicted class score with respect to the final convolutional feature maps (256 filters &times; 14 &times; 14 resolution). High activation values (purple & cyan peaks) denote anatomical regions that most heavily influenced the neural network's classification.</p>
+                <p>Gradient-weighted Class Activation Mapping computes the gradients of the predicted class score with respect to the final convolutional feature maps (256 filters &times; 14 &times; 14 resolution). High activation values denote anatomical regions that most heavily influenced the neural network's classification.</p>
               </div>
               <div class="guide-item">
                 <div class="guide-lead-title">Research Guidance</div>
@@ -863,10 +924,7 @@
             </div>
           </div>
 
-          <!-- Model Details Grid -->
           <div class="model-lab-grid">
-            
-            <!-- Left: Current Model Specs -->
             <div class="card model-specs-card">
               <div class="card-header">
                 <h3 class="card-title">Active Model Specifications</h3>
@@ -909,7 +967,6 @@
               </div>
             </div>
 
-            <!-- Right: Performance Benchmarks -->
             <div class="card model-benchmarks-card">
               <div class="card-header">
                 <h3 class="card-title">Verified Training Benchmarks</h3>
@@ -939,7 +996,6 @@
                 </div>
               </div>
 
-              <!-- Classes Table -->
               <div class="classes-breakdown-box">
                 <div class="section-title-sm">SUPPORTED MRI CLASSES</div>
                 <div class="class-chips-list">
@@ -968,7 +1024,6 @@
             </div>
           </div>
 
-          <!-- Architecture Visual Flow -->
           <div class="card architecture-flow-card">
             <div class="card-header">
               <h3 class="card-title">Neural Computation Pipeline</h3>
@@ -1055,7 +1110,7 @@
                 <input type="text" id="historySearchInput" placeholder="Filter by Study ID or Category...">
               </div>
               <div class="filter-pills" id="historyFilterPills">
-                <button class="filter-pill active" data-filter="all">All (14)</button>
+                <button class="filter-pill active" data-filter="all">All</button>
                 <button class="filter-pill" data-filter="glioma">Glioma</button>
                 <button class="filter-pill" data-filter="meningioma">Meningioma</button>
                 <button class="filter-pill" data-filter="pituitary">Pituitary</button>
@@ -1083,7 +1138,6 @@
               </table>
             </div>
 
-            <!-- Empty History State -->
             <div class="empty-table-state" id="emptyHistoryState" hidden>
               <p>No MRI studies recorded yet.</p>
               <button class="btn btn-primary-sm" data-tab="upload">Analyze your first scan</button>
@@ -1113,7 +1167,6 @@
             </div>
           </div>
 
-          <!-- Formal Clinical Research Report Sheet -->
           <div class="report-sheet-container" id="reportPrintableSheet">
             <div class="report-sheet-header">
               <div class="report-brand">
@@ -1130,7 +1183,6 @@
             <hr class="report-divider">
 
             <div class="report-two-col">
-              <!-- Left: Visual Evidence -->
               <div class="report-visual-col">
                 <div class="report-images-pair">
                   <div class="report-img-card">
@@ -1144,7 +1196,6 @@
                 </div>
               </div>
 
-              <!-- Right: Classification Findings -->
               <div class="report-data-col">
                 <div class="report-section-label">AI CLASSIFICATION OUTCOME</div>
                 
@@ -1167,7 +1218,6 @@
                     </tr>
                   </thead>
                   <tbody id="repProbTableBody">
-                    <!-- Dynamic Prob Rows -->
                   </tbody>
                 </table>
 
@@ -1226,7 +1276,7 @@
 Content-Type: multipart/form-data
 Body: file=&lt;image_binary&gt;
 
-<span class="http-comment">// Response payload (JSON):</span>
+// Response payload (JSON):
 {
   "prediction": "glioma",
   "confidence": 98.74,
@@ -1253,7 +1303,7 @@ Body: file=&lt;image_binary&gt;
   <!-- ================================================== -->
   <!-- AI ANALYSIS LOADING OVERLAY MODAL                  -->
   <!-- ================================================== -->
-  <div class="loading-modal-backdrop" id="loadingModal" hidden>
+  <div class="loading-modal-backdrop" id="loadingModal" hidden style="display:none;">
     <div class="loading-modal-card">
       <div class="loading-neural-spinner">
         <div class="spinner-ring ring-outer"></div>
@@ -1267,7 +1317,6 @@ Body: file=&lt;image_binary&gt;
         <p class="loading-sub">Executing deep convolutional neural inference...</p>
       </div>
 
-      <!-- Telemetry Sequence Checklist -->
       <div class="loading-steps-list">
         <div class="loading-step-item done" id="lStep1">
           <span class="step-check">&check;</span>
@@ -1298,7 +1347,7 @@ Body: file=&lt;image_binary&gt;
   <!-- ================================================== -->
   <!-- RESEARCH DISCLAIMER MODAL                          -->
   <!-- ================================================== -->
-  <div class="modal-backdrop" id="disclaimerModal" hidden>
+  <div class="modal-backdrop" id="disclaimerModal" hidden style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title-wrap">

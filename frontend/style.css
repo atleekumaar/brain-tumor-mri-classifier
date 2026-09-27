@@ -724,6 +724,9 @@ h1, h2, h3, h4, h5, h6 {
   gap: 10px;
   margin-bottom: 16px;
 }
+.sample-scans-grid.five-grid {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
 
 .sample-scan-btn {
   display: flex;
@@ -731,15 +734,18 @@ h1, h2, h3, h4, h5, h6 {
   gap: 10px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
-  padding: 10px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
-  cursor: pointer;
+  cursor: grab;
   transition: var(--transition-fast);
   text-align: left;
 }
 .sample-scan-btn:hover {
   border-color: var(--accent-cyan);
   background: rgba(57, 213, 255, 0.05);
+}
+.sample-scan-btn:active {
+  cursor: grabbing;
 }
 
 .sample-scan-thumb {
@@ -751,12 +757,9 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #000;
   border: 1px solid var(--border-color);
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
 }
-
-.glioma-thumb { background: radial-gradient(circle at 60% 40%, #ff5c6c 10%, #444 35%, #070B12 70%); }
-.meningioma-thumb { background: radial-gradient(circle at 25% 35%, #ffb547 12%, #444 40%, #070B12 70%); }
-.pituitary-thumb { background: radial-gradient(circle at 50% 65%, #7c6cff 12%, #444 40%, #070B12 70%); }
-.notumor-thumb { background: radial-gradient(circle at 50% 50%, #444 30%, #222 55%, #070B12 75%); }
 
 .sample-scan-info {
   display: flex;
@@ -764,12 +767,12 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
 }
 .sample-name {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-primary);
 }
 .sample-meta {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
 }
 
@@ -807,10 +810,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   VIEW 2: NEW SCAN UPLOAD PAGE
+   VIEW 2: NEW SCAN UPLOAD & 5-SAMPLE FILMSTRIP TRAY
    ========================================================================== */
 .upload-container {
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -818,24 +821,24 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-card);
   border: 2px dashed var(--border-highlight);
   border-radius: var(--radius-lg);
-  padding: 48px 32px;
+  padding: 38px 28px;
   text-align: center;
   cursor: pointer;
   transition: var(--transition-normal);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   position: relative;
 }
 
 .dropzone-card:hover, .dropzone-card.drag-over {
   border-color: var(--accent-cyan);
-  background: rgba(57, 213, 255, 0.03);
-  box-shadow: 0 0 24px rgba(57, 213, 255, 0.1);
+  background: rgba(57, 213, 255, 0.04);
+  box-shadow: 0 0 24px rgba(57, 213, 255, 0.15);
 }
 
 .dropzone-icon-glow {
-  width: 68px;
-  height: 68px;
-  margin: 0 auto 16px;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 12px;
   background: rgba(57, 213, 255, 0.08);
   border: 1px solid rgba(57, 213, 255, 0.25);
   border-radius: 50%;
@@ -849,13 +852,13 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 18px;
   font-weight: 600;
   color: #FFF;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .dropzone-desc {
   font-size: 13px;
   color: var(--text-secondary);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .dropzone-formats {
@@ -863,7 +866,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .format-pill {
@@ -881,19 +884,134 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-muted);
 }
 
+/* 5 Preset Samples Tray */
+.preset-samples-card {
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+
+.preset-samples-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.preset-sample-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: grab;
+  transition: var(--transition-fast);
+  user-select: none;
+}
+.preset-sample-box:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(57, 213, 255, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+.preset-sample-box:active {
+  cursor: grabbing;
+}
+
+.preset-sample-preview-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.preset-sample-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preset-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.drag-handle-hint {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(7, 11, 18, 0.85);
+  border: 1px solid var(--border-color);
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+}
+
+.preset-sample-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.preset-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preset-sub {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.btn-sample-run {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--accent-cyan);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: var(--transition-fast);
+}
+.btn-sample-run:hover {
+  background: var(--accent-cyan);
+  color: #000;
+  border-color: var(--accent-cyan);
+}
+
 /* Dropzone Preview Stage */
 .dropzone-preview-stage {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   text-align: left;
   cursor: default;
 }
 
 .stage-img-wrap {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   background: #000;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -915,11 +1033,11 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .stage-filename {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -927,12 +1045,12 @@ h1, h2, h3, h4, h5, h6 {
 .stage-meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .stage-meta-item {
@@ -948,7 +1066,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stage-meta-val {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-primary);
 }
 
@@ -965,27 +1083,27 @@ h1, h2, h3, h4, h5, h6 {
 .upload-guidelines-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
 .guide-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 14px;
 }
 
 .guide-num {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--accent-cyan);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .guide-card h4 {
-  font-size: 13px;
-  margin-bottom: 4px;
+  font-size: 12px;
+  margin-bottom: 3px;
 }
 
 .guide-card p {
@@ -2443,7 +2561,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN (TABLET & MOBILE)
+   RESPONSIVE DESIGN
    ========================================================================== */
 @media (max-width: 1100px) {
   .workspace-layout {
@@ -2462,6 +2580,9 @@ h1, h2, h3, h4, h5, h6 {
   .overview-split-layout {
     grid-template-columns: 1fr;
   }
+  .preset-samples-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -2476,5 +2597,8 @@ h1, h2, h3, h4, h5, h6 {
   }
   .upload-guidelines-grid {
     grid-template-columns: 1fr;
+  }
+  .preset-samples-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }
