@@ -713,45 +713,54 @@ h1, h2, h3, h4, h5, h6 {
 
 .overview-split-layout {
   display: grid;
-  grid-template-columns: 1fr 1.3fr;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
+  align-items: start;
 }
 
 /* Sample Scans Launcher */
 .sample-scans-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
 }
 .sample-scans-grid.five-grid {
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.sample-scans-grid.five-grid .sample-scan-btn:last-child {
+  grid-column: 1 / -1;
 }
 
 .sample-scan-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
   cursor: grab;
   transition: var(--transition-fast);
   text-align: left;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .sample-scan-btn:hover {
   border-color: var(--accent-cyan);
-  background: rgba(57, 213, 255, 0.05);
+  background: rgba(57, 213, 255, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 .sample-scan-btn:active {
   cursor: grabbing;
 }
 
 .sample-scan-thumb {
-  width: 38px;
-  height: 38px;
-  border-radius: 4px;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
   background-size: cover;
   background-position: center;
   background-color: #000;
@@ -764,16 +773,32 @@ h1, h2, h3, h4, h5, h6 {
 .sample-scan-info {
   display: flex;
   flex-direction: column;
+  gap: 3px;
   flex: 1;
+  min-width: 0;
 }
 .sample-name {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sample-meta {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sample-scan-btn .badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 3px 8px;
+  letter-spacing: 0.02em;
 }
 
 /* Tables */
@@ -2563,6 +2588,16 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================================================
    RESPONSIVE DESIGN
    ========================================================================== */
+@media (max-width: 1250px) {
+  .overview-split-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .sample-scans-grid.five-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
 @media (max-width: 1100px) {
   .workspace-layout {
     grid-template-columns: 1fr;
@@ -2576,9 +2611,6 @@ h1, h2, h3, h4, h5, h6 {
   }
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .overview-split-layout {
-    grid-template-columns: 1fr;
   }
   .preset-samples-grid {
     grid-template-columns: repeat(3, 1fr);
