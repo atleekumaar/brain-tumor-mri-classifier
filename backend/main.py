@@ -38,6 +38,13 @@ async def get_status():
         "status": "online",
         "device": str(device),
         "model_loaded": MODEL_PATH.exists(),
+        "model_name": "BrainTumorCNN v1.0",
+        "architecture": "4x Conv2D (3->32->64->128->256) + MaxPool + Linear(256) + Dropout(0.6) + Linear(4)",
+        "framework": "PyTorch",
+        "input_size": "224 x 224 x 3",
+        "test_accuracy": "94.56%",
+        "train_accuracy": "99.07%",
+        "f1_score": "0.94",
         "classes": classes
     }
 
@@ -50,12 +57,12 @@ async def predict(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     try:
-        label, confidence, probabilities = predict_image(str(temp_path), model, classes, device)
+        result = predict_image(str(temp_path), model, classes, device)
     finally:
         if temp_path.exists():
             os.remove(temp_path)
 
-    return {"prediction": label, "confidence": confidence, "probabilities": probabilities}
+    return result
 
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
