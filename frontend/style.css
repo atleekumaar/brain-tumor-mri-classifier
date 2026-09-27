@@ -857,6 +857,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 24px;
 }
 
+.metrics-grid.metrics-bottom-row {
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
 .metric-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
