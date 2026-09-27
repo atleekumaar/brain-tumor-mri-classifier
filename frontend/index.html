@@ -260,74 +260,126 @@
             </div>
           </div>
 
-          <!-- QUICK LAUNCH & SAMPLE STUDIES -->
-          <div class="overview-split-layout">
-            <div class="card overview-action-card">
-              <div class="card-header">
-                <h3 class="card-title">Quick Study Launcher (5 Clinical Benchmark Cases)</h3>
-                <span class="badge badge-cyan">Instant Test</span>
+          <!-- 5 CLINICAL BENCHMARK PRESET MRI SHOWCASE (LARGE & SPACIOUS) -->
+          <div class="card overview-showcase-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Clinical Benchmark Studies (5 Authentic MRI Presets)</h3>
+                <p class="card-desc">Click any scan to immediately evaluate tumor morphology with Grad-CAM, or drag it into the dropzone:</p>
               </div>
-              <p class="card-desc">Click or drag any preset case below to immediately load and evaluate through the neural classifier:</p>
-              
-              <div class="sample-scans-grid five-grid">
-                <button class="sample-scan-btn" data-sample="glioma" draggable="true">
-                  <div class="sample-scan-thumb glioma-thumb" id="thumbGlioma1"></div>
-                  <div class="sample-scan-info">
-                    <span class="sample-name">Glioma #204</span>
-                    <span class="sample-meta mono">Frontal Mass &middot; T1-CE</span>
-                  </div>
-                  <span class="badge badge-danger">Glioma</span>
-                </button>
-
-                <button class="sample-scan-btn" data-sample="meningioma" draggable="true">
-                  <div class="sample-scan-thumb meningioma-thumb" id="thumbMeningioma"></div>
-                  <div class="sample-scan-info">
-                    <span class="sample-name">Meningioma #118</span>
-                    <span class="sample-meta mono">Dural Convexity</span>
-                  </div>
-                  <span class="badge badge-warning">Meningioma</span>
-                </button>
-
-                <button class="sample-scan-btn" data-sample="pituitary" draggable="true">
-                  <div class="sample-scan-thumb pituitary-thumb" id="thumbPituitary"></div>
-                  <div class="sample-scan-info">
-                    <span class="sample-name">Pituitary #092</span>
-                    <span class="sample-meta mono">Sellar Adenoma</span>
-                  </div>
-                  <span class="badge badge-purple">Pituitary</span>
-                </button>
-
-                <button class="sample-scan-btn" data-sample="notumor" draggable="true">
-                  <div class="sample-scan-thumb notumor-thumb" id="thumbNoTumor"></div>
-                  <div class="sample-scan-info">
-                    <span class="sample-name">Control #044</span>
-                    <span class="sample-meta mono">Healthy Parenchyma</span>
-                  </div>
-                  <span class="badge badge-success">No Tumor</span>
-                </button>
-
-                <button class="sample-scan-btn" data-sample="glioma2" draggable="true">
-                  <div class="sample-scan-thumb glioma-thumb" id="thumbGlioma2"></div>
-                  <div class="sample-scan-info">
-                    <span class="sample-name">Astrocytoma #315</span>
-                    <span class="sample-meta mono">Temporal Lobe T2</span>
-                  </div>
-                  <span class="badge badge-danger">Glioma (T2)</span>
-                </button>
-              </div>
-
-              <div class="card-footer-cta">
-                <button class="btn btn-primary btn-block" data-tab="upload">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <span>Upload Custom MRI Scan or Use Tray</span>
-                </button>
+              <div class="badge-group">
+                <span class="badge badge-cyan">⚡ Instant Test</span>
+                <span class="badge badge-secondary mono">1-Click / Drag &amp; Drop</span>
               </div>
             </div>
+            
+            <div class="sample-scans-showcase">
+              <!-- Case 1: Glioma -->
+              <button class="sample-scan-btn" data-sample="glioma" draggable="true" title="Click to analyze Glioma #204">
+                <div class="sample-thumb-wrapper">
+                  <img class="sample-scan-thumb" id="thumbGlioma1" src="" alt="Glioma MRI">
+                  <span class="badge badge-danger thumb-badge">Glioma</span>
+                  <div class="thumb-drag-indicator">&equiv; Drag</div>
+                  <div class="thumb-reticle tr"></div>
+                  <div class="thumb-reticle bl"></div>
+                </div>
+                <div class="sample-scan-info">
+                  <span class="sample-name">Glioma Case #204</span>
+                  <span class="sample-meta mono">Frontal Mass &middot; Axial T1-CE</span>
+                  <div class="sample-cta-row">
+                    <span class="cta-label">⚡ Instant Test</span>
+                    <span class="cta-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </button>
 
-            <!-- RECENT STUDIES SUMMARY -->
+              <!-- Case 2: Meningioma -->
+              <button class="sample-scan-btn" data-sample="meningioma" draggable="true" title="Click to analyze Meningioma #118">
+                <div class="sample-thumb-wrapper">
+                  <img class="sample-scan-thumb" id="thumbMeningioma" src="" alt="Meningioma MRI">
+                  <span class="badge badge-warning thumb-badge">Meningioma</span>
+                  <div class="thumb-drag-indicator">&equiv; Drag</div>
+                  <div class="thumb-reticle tr"></div>
+                  <div class="thumb-reticle bl"></div>
+                </div>
+                <div class="sample-scan-info">
+                  <span class="sample-name">Meningioma #118</span>
+                  <span class="sample-meta mono">Dural Convexity Mass</span>
+                  <div class="sample-cta-row">
+                    <span class="cta-label">⚡ Instant Test</span>
+                    <span class="cta-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Case 3: Pituitary -->
+              <button class="sample-scan-btn" data-sample="pituitary" draggable="true" title="Click to analyze Pituitary #092">
+                <div class="sample-thumb-wrapper">
+                  <img class="sample-scan-thumb" id="thumbPituitary" src="" alt="Pituitary MRI">
+                  <span class="badge badge-purple thumb-badge">Pituitary</span>
+                  <div class="thumb-drag-indicator">&equiv; Drag</div>
+                  <div class="thumb-reticle tr"></div>
+                  <div class="thumb-reticle bl"></div>
+                </div>
+                <div class="sample-scan-info">
+                  <span class="sample-name">Pituitary #092</span>
+                  <span class="sample-meta mono">Sellar Region Adenoma</span>
+                  <div class="sample-cta-row">
+                    <span class="cta-label">⚡ Instant Test</span>
+                    <span class="cta-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Case 4: No Tumor -->
+              <button class="sample-scan-btn" data-sample="notumor" draggable="true" title="Click to analyze Normal Control #044">
+                <div class="sample-thumb-wrapper">
+                  <img class="sample-scan-thumb" id="thumbNoTumor" src="" alt="Normal Brain MRI">
+                  <span class="badge badge-success thumb-badge">No Tumor</span>
+                  <div class="thumb-drag-indicator">&equiv; Drag</div>
+                  <div class="thumb-reticle tr"></div>
+                  <div class="thumb-reticle bl"></div>
+                </div>
+                <div class="sample-scan-info">
+                  <span class="sample-name">Control #044</span>
+                  <span class="sample-meta mono">Healthy Brain Parenchyma</span>
+                  <div class="sample-cta-row">
+                    <span class="cta-label">⚡ Instant Test</span>
+                    <span class="cta-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Case 5: Astrocytoma T2 -->
+              <button class="sample-scan-btn" data-sample="glioma2" draggable="true" title="Click to analyze Astrocytoma #315">
+                <div class="sample-thumb-wrapper">
+                  <img class="sample-scan-thumb" id="thumbGlioma2" src="" alt="Astrocytoma T2 MRI">
+                  <span class="badge badge-danger thumb-badge">Glioma (T2)</span>
+                  <div class="thumb-drag-indicator">&equiv; Drag</div>
+                  <div class="thumb-reticle tr"></div>
+                  <div class="thumb-reticle bl"></div>
+                </div>
+                <div class="sample-scan-info">
+                  <span class="sample-name">Astrocytoma #315</span>
+                  <span class="sample-meta mono">Temporal Lobe T2 Signal</span>
+                  <div class="sample-cta-row">
+                    <span class="cta-label">⚡ Instant Test</span>
+                    <span class="cta-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- LOWER SECTION: RECENT STUDIES & QUICK UPLOAD CTA -->
+          <div class="overview-bottom-layout">
+            <!-- RECENT STUDIES SUMMARY TABLE -->
             <div class="card overview-recent-card">
               <div class="card-header">
-                <h3 class="card-title">Recent Study Activity</h3>
+                <div>
+                  <h3 class="card-title">Recent Study Activity</h3>
+                  <p class="card-sub-mono mono">Live session inference log &amp; historical MRI telemetry</p>
+                </div>
                 <button class="btn-link" data-tab="history">View All Studies &rarr;</button>
               </div>
               <div class="recent-table-wrap">
@@ -345,6 +397,25 @@
                     <!-- Dynamic Rows -->
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <!-- QUICK UPLOAD CTA CARD -->
+            <div class="card overview-cta-card">
+              <div class="cta-content">
+                <div class="cta-icon-glow">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39D5FF" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <h4 class="cta-title">Have your own MRI scan?</h4>
+                <p class="cta-desc">Upload custom axial, sagittal, or coronal slices (JPG / PNG) to generate interactive Grad-CAM heatmap explainability.</p>
+                <button class="btn btn-primary btn-block" data-tab="upload">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>+ Upload Custom MRI Scan</span>
+                </button>
               </div>
             </div>
           </div>
