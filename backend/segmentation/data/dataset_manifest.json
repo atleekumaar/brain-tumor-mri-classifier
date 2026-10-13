@@ -1,0 +1,230 @@
+{
+  "case_001": {
+    "key": "case_001",
+    "id": "BraTS-GLI-00000-000",
+    "title": "Adult Glioblastoma Multiforme #001",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_001_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_001_seg.nii.gz",
+    "description": "Right frontal high-grade glioblastoma displaying necrotic core, irregular hypervascular contrast-enhancing rim, and surrounding vasogenic edema.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 71,
+    "voxel_counts": {
+      "WT": 57305,
+      "TC": 44469,
+      "ET": 32731,
+      "ED": 12836,
+      "NCR": 11738
+    },
+    "volume_cm3": {
+      "WT": 57.3,
+      "TC": 44.47,
+      "ET": 32.73,
+      "ED": 12.84,
+      "NCR": 11.74
+    }
+  },
+  "case_002": {
+    "key": "case_002",
+    "id": "BraTS-GLI-00002-000",
+    "title": "Infiltrative Glioma Study #002",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_002_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_002_seg.nii.gz",
+    "description": "Extensive fronto-temporal infiltrative glioma with focal contrast enhancement and prominent peritumoral vasogenic infiltration.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 79,
+    "voxel_counts": {
+      "WT": 190594,
+      "TC": 34899,
+      "ET": 23651,
+      "ED": 155695,
+      "NCR": 11248
+    },
+    "volume_cm3": {
+      "WT": 190.59,
+      "TC": 34.9,
+      "ET": 23.65,
+      "ED": 155.69,
+      "NCR": 11.25
+    }
+  },
+  "case_003": {
+    "key": "case_003",
+    "id": "BraTS-GLI-00003-000",
+    "title": "High-Grade Astrocytoma #003",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_003_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_003_seg.nii.gz",
+    "description": "Parieto-occipital glioblastoma lesion with pronounced necrotic cavitation and extensive contrast enhancement.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 108,
+    "voxel_counts": {
+      "WT": 99239,
+      "TC": 41466,
+      "ET": 24252,
+      "ED": 57773,
+      "NCR": 17214
+    },
+    "volume_cm3": {
+      "WT": 99.24,
+      "TC": 41.47,
+      "ET": 24.25,
+      "ED": 57.77,
+      "NCR": 17.21
+    }
+  },
+  "case_004": {
+    "key": "case_004",
+    "id": "BraTS-GLI-00005-000",
+    "title": "Multicentric Glioblastoma #004",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_004_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_004_seg.nii.gz",
+    "description": "Deep white matter glioma with significant mass effect, thick irregular rim enhancement, and central necrosis.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 104,
+    "voxel_counts": {
+      "WT": 124783,
+      "TC": 48041,
+      "ET": 23854,
+      "ED": 76742,
+      "NCR": 24187
+    },
+    "volume_cm3": {
+      "WT": 124.78,
+      "TC": 48.04,
+      "ET": 23.85,
+      "ED": 76.74,
+      "NCR": 24.19
+    }
+  },
+  "case_005": {
+    "key": "case_005",
+    "id": "BraTS-GLI-00006-000",
+    "title": "Temporal Lobe Glioma #005",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_005_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_005_seg.nii.gz",
+    "description": "Left temporal lobe high-grade glioma featuring confluent vasogenic edema and dense nodular enhancing components.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 73,
+    "voxel_counts": {
+      "WT": 137911,
+      "TC": 51954,
+      "ET": 26448,
+      "ED": 85957,
+      "NCR": 25506
+    },
+    "volume_cm3": {
+      "WT": 137.91,
+      "TC": 51.95,
+      "ET": 26.45,
+      "ED": 85.96,
+      "NCR": 25.51
+    }
+  },
+  "case_006": {
+    "key": "case_006",
+    "id": "BraTS-GLI-00008-000",
+    "title": "Focal Subcortical Glioma #006",
+    "modality": "Axial T1-CE Volumetric NIfTI",
+    "has_ground_truth": true,
+    "mri_path": "backend\\segmentation\\data\\BraTS_Case_006_T1CE.nii.gz",
+    "gt_path": "backend\\segmentation\\data\\BraTS_Case_006_seg.nii.gz",
+    "description": "Focal subcortical astrocytoma with well-circumscribed enhancing core and peripheral non-enhancing tumor zone.",
+    "dataset_name": "ASNR-MICCAI BraTS 2023 Adult Glioma Challenge",
+    "source_url": "https://huggingface.co/datasets/MedOtter/brats2023-gli-dataset",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "dimensions": [
+      240,
+      240,
+      155
+    ],
+    "voxel_spacing": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "initial_slice_focus": 69,
+    "voxel_counts": {
+      "WT": 18462,
+      "TC": 327,
+      "ET": 311,
+      "ED": 18135,
+      "NCR": 16
+    },
+    "volume_cm3": {
+      "WT": 18.46,
+      "TC": 0.33,
+      "ET": 0.31,
+      "ED": 18.14,
+      "NCR": 0.02
+    }
+  }
+}

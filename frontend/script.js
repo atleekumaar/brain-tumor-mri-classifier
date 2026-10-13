@@ -311,6 +311,9 @@
     if (tabId === "workspace" || tabId === "explainability" || tabId === "reports") {
       updateWorkspaceView();
     }
+    if (tabId === "segmentation") {
+      onSegmentationTabOpened();
+    }
   }
 
   dom.navLinks.forEach(link => {
@@ -641,8 +644,15 @@
     if (dom.studyFileName) dom.studyFileName.textContent = study.filename;
     if (dom.studyStatusPill) dom.studyStatusPill.textContent = "Analysis Complete";
 
-    if (dom.mriViewerImage) dom.mriViewerImage.src = study.dataUrl;
-    if (dom.mriViewerHeatmap) dom.mriViewerHeatmap.src = study.gradcamHeatmap;
+    if (dom.mriViewerImage && study.dataUrl) dom.mriViewerImage.src = study.dataUrl;
+    if (dom.mriViewerHeatmap) {
+      if (study.gradcamHeatmap) {
+        dom.mriViewerHeatmap.src = study.gradcamHeatmap;
+        dom.mriViewerHeatmap.style.display = "block";
+      } else {
+        dom.mriViewerHeatmap.style.display = "none";
+      }
+    }
 
     applyViewerTransforms();
 
@@ -682,16 +692,16 @@
       });
     }
 
-    if (dom.quickCamHeatmap) dom.quickCamHeatmap.src = study.gradcamHeatmap;
-    if (dom.explainOriginalImg) dom.explainOriginalImg.src = study.dataUrl;
-    if (dom.explainHeatmapImg) dom.explainHeatmapImg.src = study.gradcamHeatmap;
-    if (dom.explainOverlayBaseImg) dom.explainOverlayBaseImg.src = study.dataUrl;
-    if (dom.explainOverlayHeatmapImg) dom.explainOverlayHeatmapImg.src = study.gradcamHeatmap;
+    if (dom.quickCamHeatmap && study.gradcamHeatmap) dom.quickCamHeatmap.src = study.gradcamHeatmap;
+    if (dom.explainOriginalImg && study.dataUrl) dom.explainOriginalImg.src = study.dataUrl;
+    if (dom.explainHeatmapImg && study.gradcamHeatmap) dom.explainHeatmapImg.src = study.gradcamHeatmap;
+    if (dom.explainOverlayBaseImg && study.dataUrl) dom.explainOverlayBaseImg.src = study.dataUrl;
+    if (dom.explainOverlayHeatmapImg && study.gradcamHeatmap) dom.explainOverlayHeatmapImg.src = study.gradcamHeatmap;
 
     if (dom.repStudyId) dom.repStudyId.textContent = study.id;
     if (dom.repDate) dom.repDate.textContent = study.timestamp;
-    if (dom.repOriginalImg) dom.repOriginalImg.src = study.dataUrl;
-    if (dom.repGradcamImg) dom.repGradcamImg.src = study.gradcamHeatmap;
+    if (dom.repOriginalImg && study.dataUrl) dom.repOriginalImg.src = study.dataUrl;
+    if (dom.repGradcamImg && study.gradcamHeatmap) dom.repGradcamImg.src = study.gradcamHeatmap;
     if (dom.repPredictedClass) dom.repPredictedClass.textContent = meta.label;
     if (dom.repConfidence) dom.repConfidence.textContent = `${study.confidence.toFixed(1)}%`;
     if (dom.repLatency) dom.repLatency.textContent = `${study.inferenceTimeMs} ms`;
@@ -1087,6 +1097,745 @@
   }
 
   // =========================================================================
+  // 3D TUMOR SEGMENTATION & VOLUMETRIC WORKSTATION CONTROLLER
+  // =========================================================================
+  const segState = {
+    currentCaseKey: "case_001",
+    activeStudyData: null,
+    plane: "axial",
+    currentSlice: 48,
+    totalSlices: 96,
+    opacity: 0.70,
+    contrast: 100,
+    viewMode: "overlay",
+    isPlayingCine: false,
+    cineInterval: null,
+    cachedSlices: {},
+    threeScene: null,
+    threeCamera: null,
+    threeRenderer: null,
+    threeControls: null,
+    threeMeshes: {},
+    autoRotate: true,
+    customFile: null,
+    customGtFile: null
+  };
+
+  const segDom = {
+    statusBadge: document.getElementById("segEngineStatusBadge"),
+    loadBenchmarkBtn: document.getElementById("segLoadBenchmarkBtn"),
+    uploadTriggerBtn: document.getElementById("segUploadTriggerBtn"),
+    fileInput: document.getElementById("segFileInput"),
+    gtFileInput: document.getElementById("segGtFileInput"),
+    presetsGrid: document.getElementById("segPresetsGrid"),
+    canvasContainer: document.getElementById("segCanvasContainer"),
+    mriSliceImg: document.getElementById("segMriSliceImg"),
+    predSliceImg: document.getElementById("segPredSliceImg"),
+    gtSliceImg: document.getElementById("segGtSliceImg"),
+    crosshair: document.getElementById("segCrosshair"),
+    hudStudy: document.getElementById("segHudStudy"),
+    hudPlane: document.getElementById("segHudPlane"),
+    hudSlice: document.getElementById("segHudSlice"),
+    hudSpacing: document.getElementById("segHudSpacing"),
+    loadingOverlay: document.getElementById("segLoadingOverlay"),
+    loadingText: document.getElementById("segLoadingText"),
+    emptyOverlay: document.getElementById("segEmptyOverlay"),
+    emptyTitle: document.getElementById("segEmptyTitle"),
+    emptyDesc: document.getElementById("segEmptyDesc"),
+    prevSliceBtn: document.getElementById("segPrevSliceBtn"),
+    playCineBtn: document.getElementById("segPlayCineBtn"),
+    nextSliceBtn: document.getElementById("segNextSliceBtn"),
+    sliceSlider: document.getElementById("segSliceSlider"),
+    sliceInput: document.getElementById("segSliceInput"),
+    sliceTotalText: document.getElementById("segSliceTotalText"),
+    opacitySlider: document.getElementById("segOpacitySlider"),
+    opacityVal: document.getElementById("segOpacityVal"),
+    contrastSlider: document.getElementById("segContrastSlider"),
+    attachGtBtn: document.getElementById("segAttachGtBtn"),
+    viewport3d: document.getElementById("seg3dViewport"),
+    canvas3d: document.getElementById("seg3dCanvas"),
+    empty3d: document.getElementById("seg3dEmpty"),
+    resetCamBtn: document.getElementById("seg3dResetCamBtn"),
+    rotateToggleBtn: document.getElementById("seg3dRotateToggleBtn"),
+    toggleRegionWT: document.getElementById("toggleRegionWT"),
+    toggleRegionTC: document.getElementById("toggleRegionTC"),
+    toggleRegionET: document.getElementById("toggleRegionET"),
+    volVoxelMeta: document.getElementById("segVolVoxelMeta"),
+    totalVolChip: document.getElementById("segTotalVolChip"),
+    volTableBody: document.getElementById("segVolTableBody"),
+    validationCard: document.getElementById("segValidationCard"),
+    diceOverallBadge: document.getElementById("segDiceOverallBadge"),
+    metricWtDice: document.getElementById("metricWtDice"),
+    metricTcDice: document.getElementById("metricTcDice"),
+    metricEtDice: document.getElementById("metricEtDice"),
+    metricMeanIou: document.getElementById("metricMeanIou"),
+    validationNote: document.getElementById("segValidationNote"),
+    planeBtns: document.querySelectorAll(".btn-plane"),
+    modeBtns: document.querySelectorAll(".btn-mode")
+  };
+
+  function checkSegmentationEngineStatus() {
+    fetch(`${API_BASE}/api/segmentation/status`)
+      .then(res => res.json())
+      .then(data => {
+        if (!segDom.statusBadge) return;
+        if (data.status === "ready") {
+          segDom.statusBadge.className = "badge badge-success";
+          segDom.statusBadge.textContent = "● 3D U-NET READY (CUDA/CPU)";
+        } else {
+          segDom.statusBadge.className = "badge badge-warning";
+          segDom.statusBadge.textContent = "● CHECKPOINT PENDING";
+        }
+      })
+      .catch(() => {
+        if (segDom.statusBadge) {
+          segDom.statusBadge.className = "badge badge-danger";
+          segDom.statusBadge.textContent = "● ENGINE OFFLINE";
+        }
+      });
+  }
+
+  function initSeg3DViewer() {
+    if (!segDom.canvas3d || !segDom.viewport3d) return;
+
+    if (typeof THREE === "undefined") {
+      if (segDom.empty3d) segDom.empty3d.textContent = "3D WebGL Library Loading...";
+      return;
+    }
+
+    try {
+      const width = segDom.viewport3d.clientWidth || 380;
+      const height = segDom.viewport3d.clientHeight || 280;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(0, -90, 80);
+      camera.up.set(0, 0, 1);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: segDom.canvas3d,
+        alpha: true,
+        antialias: true
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Lighting
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0x39D5FF, 1.2);
+      dirLight1.position.set(50, 50, 80);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0xFF5C6C, 0.9);
+      dirLight2.position.set(-50, -50, -30);
+      scene.add(dirLight2);
+
+      // Orbit controls
+      let controls = null;
+      if (typeof THREE.OrbitControls !== "undefined") {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.8;
+      }
+
+      segState.threeScene = scene;
+      segState.threeCamera = camera;
+      segState.threeRenderer = renderer;
+      segState.threeControls = controls;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (controls) controls.update();
+        if (segState.autoRotate && scene) {
+          scene.rotation.z += 0.006;
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        if (!segDom.viewport3d || !segState.threeCamera || !segState.threeRenderer) return;
+        const w = segDom.viewport3d.clientWidth;
+        const h = segDom.viewport3d.clientHeight;
+        segState.threeCamera.aspect = w / h;
+        segState.threeCamera.updateProjectionMatrix();
+        segState.threeRenderer.setSize(w, h);
+      });
+    } catch (e) {
+      console.warn("[3D] Three.js init error:", e);
+    }
+  }
+
+  function render3DSurface(meshData) {
+    if (!segState.threeScene) {
+      initSeg3DViewer();
+    }
+    if (!segState.threeScene || !meshData) return;
+
+    if (segDom.empty3d) segDom.empty3d.style.display = "none";
+
+    // Clear existing tumor meshes
+    Object.values(segState.threeMeshes).forEach(mesh => {
+      if (mesh && segState.threeScene) {
+        segState.threeScene.remove(mesh);
+        if (mesh.geometry) mesh.geometry.dispose();
+      }
+    });
+    segState.threeMeshes = {};
+
+    const regionConfigs = {
+      WT: { color: 0x39D5FF, opacity: 0.35, wireframe: false, depthWrite: false },
+      TC: { color: 0xFF5C6C, opacity: 0.65, wireframe: false, depthWrite: true },
+      ET: { color: 0xFFD60A, opacity: 0.90, wireframe: false, depthWrite: true }
+    };
+
+    let hasAnyMesh = false;
+
+    ["WT", "TC", "ET"].forEach(reg => {
+      const regMesh = meshData[reg];
+      if (regMesh && regMesh.vertices && regMesh.vertices.length >= 9) {
+        const geom = new THREE.BufferGeometry();
+        const verts = new Float32Array(regMesh.vertices);
+        geom.setAttribute("position", new THREE.BufferAttribute(verts, 3));
+
+        if (regMesh.faces && regMesh.faces.length >= 3) {
+          const faces = new Uint32Array(regMesh.faces);
+          geom.setIndex(new THREE.BufferAttribute(faces, 1));
+          geom.computeVertexNormals();
+
+          const conf = regionConfigs[reg];
+          const mat = new THREE.MeshStandardMaterial({
+            color: conf.color,
+            transparent: true,
+            opacity: conf.opacity,
+            roughness: 0.25,
+            metalness: 0.15,
+            side: THREE.DoubleSide,
+            depthWrite: conf.depthWrite
+          });
+
+          const mesh = new THREE.Mesh(geom, mat);
+          segState.threeScene.add(mesh);
+          segState.threeMeshes[reg] = mesh;
+          hasAnyMesh = true;
+        }
+      }
+    });
+
+    if (hasAnyMesh && segState.threeCamera && segState.threeControls) {
+      // Fit camera framing to actual tumor bounding box
+      const box = new THREE.Box3();
+      Object.values(segState.threeMeshes).forEach(m => {
+        if (m && m.geometry) box.expandByObject(m);
+      });
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z, 25.0);
+      const fov = segState.threeCamera.fov * (Math.PI / 180);
+      const dist = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
+      segState.threeCamera.position.set(0, -dist, dist * 0.75);
+      segState.threeCamera.lookAt(0, 0, 0);
+      segState.threeControls.target.set(0, 0, 0);
+      segState.threeControls.update();
+    } else if (!hasAnyMesh && segDom.empty3d) {
+      segDom.empty3d.style.display = "flex";
+      segDom.empty3d.textContent = "No foreground tumor volume in study (Healthy control baseline).";
+    }
+
+    // Reset rotation and camera focus
+    if (segState.threeScene) {
+      segState.threeScene.rotation.set(0, 0, 0);
+    }
+  }
+
+  function applyRegionVisibility() {
+    const showWT = segDom.toggleRegionWT ? segDom.toggleRegionWT.checked : true;
+    const showTC = segDom.toggleRegionTC ? segDom.toggleRegionTC.checked : true;
+    const showET = segDom.toggleRegionET ? segDom.toggleRegionET.checked : true;
+
+    if (segState.threeMeshes["WT"]) segState.threeMeshes["WT"].visible = showWT;
+    if (segState.threeMeshes["TC"]) segState.threeMeshes["TC"].visible = showTC;
+    if (segState.threeMeshes["ET"]) segState.threeMeshes["ET"].visible = showET;
+  }
+
+  function populateVolumetricsTable(measData, titleNote) {
+    if (!segDom.volTableBody || !measData || !measData.subregions) return;
+    segDom.volTableBody.innerHTML = "";
+    const subs = measData.subregions;
+    const order = [
+      { key: "WT", label: "Whole Tumor (WT)", badge: "badge-wt" },
+      { key: "TC", label: "Tumor Core (TC)", badge: "badge-tc" },
+      { key: "ET", label: "Enhancing Tumor (ET)", badge: "badge-et" },
+      { key: "ED", label: "Peritumoral Edema", badge: "badge-ed" },
+      { key: "NCR", label: "Necrotic Core", badge: "badge-ncr" }
+    ];
+
+    order.forEach(item => {
+      const info = subs[item.key];
+      if (info) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="region-badge ${item.badge}">${item.label}</span></td>
+          <td class="mono">${info.voxel_count.toLocaleString()}</td>
+          <td class="mono"><strong>${info.volume_cm3.toFixed(2)} cm³</strong></td>
+          <td class="mono">${info.volume_mm3.toLocaleString()} mm³</td>
+        `;
+        segDom.volTableBody.appendChild(tr);
+      }
+    });
+
+    if (segDom.totalVolChip && subs["WT"]) {
+      segDom.totalVolChip.textContent = `${subs["WT"].volume_cm3.toFixed(2)} cm³ WT ${titleNote || ""}`.trim();
+    }
+  }
+
+  function updateViewMode() {
+    if (!segDom.predSliceImg || !segDom.gtSliceImg) return;
+    const mode = segState.viewMode;
+
+    if (mode === "overlay") {
+      segDom.predSliceImg.style.display = "block";
+      segDom.gtSliceImg.style.display = "none";
+      segDom.predSliceImg.style.opacity = segState.opacity;
+      if (segState.activeStudyData) {
+        const pMeas = segState.activeStudyData.prediction_measurements || segState.activeStudyData.measurements;
+        populateVolumetricsTable(pMeas, "(Model Pred)");
+        const pMesh = segState.activeStudyData.prediction_mesh_3d || segState.activeStudyData.mesh_3d;
+        if (pMesh) render3DSurface(pMesh);
+      }
+    } else if (mode === "gt") {
+      segDom.predSliceImg.style.display = "none";
+      segDom.gtSliceImg.style.display = "block";
+      segDom.gtSliceImg.style.opacity = segState.opacity;
+      if (segState.activeStudyData) {
+        const gtMeas = segState.activeStudyData.ground_truth_measurements || segState.activeStudyData.measurements;
+        populateVolumetricsTable(gtMeas, "(Expert GT)");
+        const gtMesh = segState.activeStudyData.ground_truth_mesh_3d || segState.activeStudyData.mesh_3d;
+        if (gtMesh) render3DSurface(gtMesh);
+      }
+    } else if (mode === "split") {
+      segDom.predSliceImg.style.display = "block";
+      segDom.gtSliceImg.style.display = "block";
+      segDom.predSliceImg.style.opacity = segState.opacity * 0.7;
+      segDom.gtSliceImg.style.opacity = segState.opacity * 0.7;
+      if (segState.activeStudyData) {
+        const gtMeas = segState.activeStudyData.ground_truth_measurements || segState.activeStudyData.measurements;
+        populateVolumetricsTable(gtMeas, "(GT Ref)");
+      }
+    } else { // raw
+      segDom.predSliceImg.style.display = "none";
+      segDom.gtSliceImg.style.display = "none";
+    }
+    applyRegionVisibility();
+  }
+
+  function fetchAndDisplaySlice(sliceIdx) {
+    segState.currentSlice = sliceIdx;
+
+    if (segDom.sliceSlider) segDom.sliceSlider.value = sliceIdx;
+    if (segDom.sliceInput) segDom.sliceInput.value = sliceIdx;
+    if (segDom.hudSlice) segDom.hudSlice.textContent = `SLICE: ${sliceIdx} / ${segState.totalSlices}`;
+
+    const cacheKey = `${segState.currentCaseKey}_${segState.plane}_${sliceIdx}`;
+    if (segState.cachedSlices[cacheKey]) {
+      const cached = segState.cachedSlices[cacheKey];
+      if (segDom.mriSliceImg) segDom.mriSliceImg.src = cached.mri;
+      if (segDom.predSliceImg && cached.pred) segDom.predSliceImg.src = cached.pred;
+      if (segDom.gtSliceImg && cached.gt) segDom.gtSliceImg.src = cached.gt;
+      return;
+    }
+
+    // Fetch on-demand from backend
+    const url = `${API_BASE}/api/segmentation/slice?case_key=${segState.currentCaseKey}&plane=${segState.plane}&slice_idx=${sliceIdx}`;
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.mri_image && segDom.mriSliceImg) {
+          segDom.mriSliceImg.src = data.mri_image;
+        }
+        const predUrl = data.pred_mask || data.mask_overlay || null;
+        const gtUrl = data.gt_mask || data.mask_overlay || null;
+        if (segDom.predSliceImg && predUrl) {
+          segDom.predSliceImg.src = predUrl;
+        }
+        if (segDom.gtSliceImg && gtUrl) {
+          segDom.gtSliceImg.src = gtUrl;
+        }
+        segState.cachedSlices[cacheKey] = {
+          mri: data.mri_image,
+          pred: predUrl,
+          gt: gtUrl
+        };
+      })
+      .catch(err => console.warn("[Slice] Fetch error:", err));
+  }
+
+  function displaySegmentationResults(data) {
+    segState.activeStudyData = data;
+    segState.currentCaseKey = data.patient_study_id ? data.patient_study_id.toLowerCase().replace(/[^a-z0-9]/g, "_") : "study";
+
+    if (segDom.emptyOverlay) segDom.emptyOverlay.style.display = "none";
+    if (segDom.loadingOverlay) segDom.loadingOverlay.style.display = "none";
+
+    // Telemetry HUD
+    if (segDom.hudStudy) segDom.hudStudy.textContent = `STUDY: ${data.patient_study_id}`;
+    if (segDom.hudSpacing && data.geometry) {
+      const sp = data.geometry.voxel_spacing_mm || [1.0, 1.0, 1.0];
+      segDom.hudSpacing.textContent = `SPACING: ${sp[0]} × ${sp[1]} × ${sp[2]} mm`;
+      if (segDom.volVoxelMeta) segDom.volVoxelMeta.textContent = `Physical integration: ${sp[0]}×${sp[1]}×${sp[2]}mm / voxel`;
+    }
+
+    // Planes & Slices
+    const initView = data.initial_view || {};
+    segState.plane = initView.plane || "axial";
+    segState.totalSlices = initView.total_slices || 96;
+    segState.currentSlice = initView.slice_index || 48;
+
+    if (segDom.sliceSlider) {
+      segDom.sliceSlider.max = segState.totalSlices - 1;
+      segDom.sliceSlider.value = segState.currentSlice;
+    }
+    if (segDom.sliceInput) {
+      segDom.sliceInput.max = segState.totalSlices - 1;
+      segDom.sliceInput.value = segState.currentSlice;
+    }
+    if (segDom.sliceTotalText) segDom.sliceTotalText.textContent = `/ ${segState.totalSlices}`;
+
+    // Images
+    if (initView.mri_image && segDom.mriSliceImg) segDom.mriSliceImg.src = initView.mri_image;
+    if (initView.pred_mask && segDom.predSliceImg) segDom.predSliceImg.src = initView.pred_mask;
+    if (initView.gt_mask && segDom.gtSliceImg) {
+      segDom.gtSliceImg.src = initView.gt_mask;
+      if (segDom.btnModeGt) segDom.btnModeGt.disabled = false;
+    } else {
+      if (segDom.btnModeGt) segDom.btnModeGt.disabled = true;
+    }
+
+    updateViewMode();
+
+    // Populate Volumetrics Table
+    populateVolumetricsTable(data.measurements);
+
+    // Populate Ground Truth Evaluation Metrics Card
+    if (data.evaluation_metrics && data.evaluation_metrics.subregions) {
+      const em = data.evaluation_metrics;
+      if (segDom.validationCard) segDom.validationCard.style.display = "block";
+      if (segDom.diceOverallBadge) segDom.diceOverallBadge.textContent = `Mean Dice: ${(em.mean_dice * 100).toFixed(1)}%`;
+      if (segDom.metricWtDice) segDom.metricWtDice.textContent = `${(em.subregions.WT.dice * 100).toFixed(1)}%`;
+      if (segDom.metricTcDice) segDom.metricTcDice.textContent = `${(em.subregions.TC.dice * 100).toFixed(1)}%`;
+      if (segDom.metricEtDice) segDom.metricEtDice.textContent = `${(em.subregions.ET.dice * 100).toFixed(1)}%`;
+      if (segDom.metricMeanIou) segDom.metricMeanIou.textContent = `${(em.mean_iou * 100).toFixed(1)}%`;
+      if (segDom.validationNote) {
+        segDom.validationNote.textContent = `Measured against authentic ground-truth mask. Inference latency: ${data.inference_time_ms} ms.`;
+      }
+    } else {
+      if (segDom.diceOverallBadge) segDom.diceOverallBadge.textContent = "Dice: N/A";
+      if (segDom.metricWtDice) segDom.metricWtDice.textContent = "N/A";
+      if (segDom.metricTcDice) segDom.metricTcDice.textContent = "N/A";
+      if (segDom.metricEtDice) segDom.metricEtDice.textContent = "N/A";
+      if (segDom.metricMeanIou) segDom.metricMeanIou.textContent = "N/A";
+      if (segDom.validationNote) {
+        segDom.validationNote.textContent = "Single study evaluation. Reference ground-truth mask not attached.";
+      }
+    }
+
+    // Render 3D Surface Isosurface
+    if (data.mesh_3d) {
+      render3DSurface(data.mesh_3d);
+      applyRegionVisibility();
+    }
+  }
+
+  function loadSegmentationCase(caseKey) {
+    segState.currentCaseKey = caseKey;
+    if (segDom.loadingOverlay) {
+      segDom.loadingOverlay.style.display = "flex";
+      segDom.loadingText.textContent = `Loading Authentic BraTS Volume (${caseKey.toUpperCase()})...`;
+    }
+
+    const formData = new FormData();
+    formData.append("sample_key", caseKey);
+
+    fetch(`${API_BASE}/api/segmentation/predict`, {
+      method: "POST",
+      body: formData
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(errData => { throw errData; });
+        }
+        return res.json();
+      })
+      .then(data => {
+        segState.currentCaseKey = caseKey;
+        displaySegmentationResults(data);
+        const attribution = data.dataset_attribution ? ` [${data.dataset_attribution}]` : "";
+        showToast(`Loaded ${data.patient_study_id}${attribution}`, "success");
+      })
+      .catch(err => {
+        if (segDom.loadingOverlay) segDom.loadingOverlay.style.display = "none";
+        const msg = err.detail || err.error || "Inference failed";
+        showToast(`Segmentation error: ${msg}`, "error");
+        if (segDom.emptyOverlay) {
+          segDom.emptyOverlay.style.display = "flex";
+          segDom.emptyTitle.textContent = "Segmentation Unavailable";
+          segDom.emptyDesc.textContent = msg;
+        }
+      });
+  }
+
+  function loadCustomNiftiVolume(fileObj, gtFileObj = null) {
+    if (segDom.loadingOverlay) {
+      segDom.loadingOverlay.style.display = "flex";
+      segDom.loadingText.textContent = `Uploading & Processing NIfTI Volume: ${fileObj.name}...`;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileObj);
+    if (gtFileObj) {
+      formData.append("ground_truth", gtFileObj);
+    }
+
+    fetch(`${API_BASE}/api/segmentation/predict`, {
+      method: "POST",
+      body: formData
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(err => { throw err; });
+        }
+        return res.json();
+      })
+      .then(data => {
+        displaySegmentationResults(data);
+        showToast(`Analyzed ${fileObj.name} (${data.geometry.dimensions.join("×")})`, "success");
+      })
+      .catch(err => {
+        if (segDom.loadingOverlay) segDom.loadingOverlay.style.display = "none";
+        const msg = err.detail || err.error || "Failed to process NIfTI file";
+        showToast(`NIfTI Error: ${msg}`, "error");
+        if (segDom.emptyOverlay) {
+          segDom.emptyOverlay.style.display = "flex";
+          segDom.emptyTitle.textContent = "Upload Failed";
+          segDom.emptyDesc.textContent = msg;
+        }
+      });
+  }
+
+  function toggleCineLoop() {
+    if (segState.isPlayingCine) {
+      clearInterval(segState.cineInterval);
+      segState.isPlayingCine = false;
+      if (segDom.playCineBtn) segDom.playCineBtn.textContent = "▶ Cine";
+    } else {
+      segState.isPlayingCine = true;
+      if (segDom.playCineBtn) segDom.playCineBtn.textContent = "⏸ Pause";
+      segState.cineInterval = setInterval(() => {
+        let next = segState.currentSlice + 1;
+        if (next >= segState.totalSlices) next = 0;
+        fetchAndDisplaySlice(next);
+      }, 70);
+    }
+  }
+
+  function initSegmentationLab() {
+    checkSegmentationEngineStatus();
+    initSeg3DViewer();
+
+    // Preset cards
+    document.querySelectorAll(".seg-preset-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".seg-preset-card").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const key = btn.getAttribute("data-seg-sample");
+        if (key) loadSegmentationCase(key);
+      });
+    });
+
+    if (segDom.loadBenchmarkBtn) {
+      segDom.loadBenchmarkBtn.addEventListener("click", () => {
+        loadSegmentationCase("case_001");
+      });
+    }
+
+    // Upload triggers
+    if (segDom.uploadTriggerBtn && segDom.fileInput) {
+      segDom.uploadTriggerBtn.addEventListener("click", () => segDom.fileInput.click());
+    }
+    if (segDom.fileInput) {
+      segDom.fileInput.addEventListener("change", e => {
+        if (e.target.files && e.target.files[0]) {
+          segState.customFile = e.target.files[0];
+          loadCustomNiftiVolume(segState.customFile, segState.customGtFile);
+        }
+      });
+    }
+
+    if (segDom.attachGtBtn && segDom.gtFileInput) {
+      segDom.attachGtBtn.addEventListener("click", () => segDom.gtFileInput.click());
+    }
+    if (segDom.gtFileInput) {
+      segDom.gtFileInput.addEventListener("change", e => {
+        if (e.target.files && e.target.files[0]) {
+          segState.customGtFile = e.target.files[0];
+          if (segState.customFile) {
+            loadCustomNiftiVolume(segState.customFile, segState.customGtFile);
+          } else {
+            showToast("Upload primary volume first to compare ground truth", "warning");
+          }
+        }
+      });
+    }
+
+    // Plane buttons
+    segDom.planeBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        segDom.planeBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const plane = btn.getAttribute("data-plane");
+        segState.plane = plane;
+        if (segDom.hudPlane) segDom.hudPlane.textContent = `PLANE: ${plane.toUpperCase()}`;
+
+        if (segState.activeStudyData && segState.activeStudyData.planes && segState.activeStudyData.planes[plane]) {
+          const pInfo = segState.activeStudyData.planes[plane];
+          segState.totalSlices = pInfo.total_slices;
+          if (segDom.sliceSlider) {
+            segDom.sliceSlider.max = segState.totalSlices - 1;
+          }
+          if (segDom.sliceInput) {
+            segDom.sliceInput.max = segState.totalSlices - 1;
+          }
+          if (segDom.sliceTotalText) {
+            segDom.sliceTotalText.textContent = `/ ${segState.totalSlices}`;
+          }
+          fetchAndDisplaySlice(pInfo.initial_focus_slice || Math.floor(segState.totalSlices / 2));
+        } else {
+          fetchAndDisplaySlice(Math.floor(segState.totalSlices / 2));
+        }
+      });
+    });
+
+    // View mode buttons
+    segDom.modeBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        segDom.modeBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        segState.viewMode = btn.getAttribute("data-mode");
+        updateViewMode();
+      });
+    });
+
+    // Slice navigation
+    if (segDom.sliceSlider) {
+      segDom.sliceSlider.addEventListener("input", e => {
+        fetchAndDisplaySlice(parseInt(e.target.value, 10));
+      });
+    }
+    if (segDom.sliceInput) {
+      segDom.sliceInput.addEventListener("change", e => {
+        let val = parseInt(e.target.value, 10);
+        val = Math.max(0, Math.min(segState.totalSlices - 1, isNaN(val) ? 0 : val));
+        fetchAndDisplaySlice(val);
+      });
+    }
+    if (segDom.prevSliceBtn) {
+      segDom.prevSliceBtn.addEventListener("click", () => {
+        let next = segState.currentSlice - 1;
+        if (next < 0) next = segState.totalSlices - 1;
+        fetchAndDisplaySlice(next);
+      });
+    }
+    if (segDom.nextSliceBtn) {
+      segDom.nextSliceBtn.addEventListener("click", () => {
+        let next = segState.currentSlice + 1;
+        if (next >= segState.totalSlices) next = 0;
+        fetchAndDisplaySlice(next);
+      });
+    }
+    if (segDom.playCineBtn) {
+      segDom.playCineBtn.addEventListener("click", toggleCineLoop);
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener("keydown", e => {
+      const segView = document.getElementById("view-segmentation");
+      if (!segView || !segView.classList.contains("active")) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        let next = segState.currentSlice - 1;
+        if (next < 0) next = segState.totalSlices - 1;
+        fetchAndDisplaySlice(next);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        let next = segState.currentSlice + 1;
+        if (next >= segState.totalSlices) next = 0;
+        fetchAndDisplaySlice(next);
+      } else if (e.code === "Space" && e.target.tagName !== "INPUT") {
+        e.preventDefault();
+        toggleCineLoop();
+      }
+    });
+
+    // Opacity & contrast sliders
+    if (segDom.opacitySlider) {
+      segDom.opacitySlider.addEventListener("input", e => {
+        segState.opacity = parseInt(e.target.value, 10) / 100.0;
+        if (segDom.opacityVal) segDom.opacityVal.textContent = `${e.target.value}%`;
+        if (segDom.predSliceImg) segDom.predSliceImg.style.opacity = segState.opacity;
+        if (segDom.gtSliceImg) segDom.gtSliceImg.style.opacity = segState.opacity;
+      });
+    }
+    if (segDom.contrastSlider) {
+      segDom.contrastSlider.addEventListener("input", e => {
+        if (segDom.mriSliceImg) {
+          segDom.mriSliceImg.style.filter = `contrast(${e.target.value}%)`;
+        }
+      });
+    }
+
+    // 3D Controls
+    if (segDom.resetCamBtn) {
+      segDom.resetCamBtn.addEventListener("click", () => {
+        if (segState.threeCamera && segState.threeControls) {
+          segState.threeCamera.position.set(0, -90, 80);
+          segState.threeCamera.up.set(0, 0, 1);
+          segState.threeControls.target.set(0, 0, 0);
+          segState.threeControls.update();
+        }
+      });
+    }
+    if (segDom.rotateToggleBtn) {
+      segDom.rotateToggleBtn.addEventListener("click", () => {
+        segState.autoRotate = !segState.autoRotate;
+        segDom.rotateToggleBtn.classList.toggle("active", segState.autoRotate);
+      });
+    }
+
+    [segDom.toggleRegionWT, segDom.toggleRegionTC, segDom.toggleRegionET].forEach(toggle => {
+      if (toggle) toggle.addEventListener("change", applyRegionVisibility);
+    });
+  }
+
+  function onSegmentationTabOpened() {
+    if (!segState.activeStudyData) {
+      loadSegmentationCase("case_001");
+    }
+    setTimeout(() => {
+      if (segDom.viewport3d && segState.threeCamera && segState.threeRenderer) {
+        const w = segDom.viewport3d.clientWidth;
+        const h = segDom.viewport3d.clientHeight;
+        segState.threeCamera.aspect = w / h;
+        segState.threeCamera.updateProjectionMatrix();
+        segState.threeRenderer.setSize(w, h);
+      }
+    }, 100);
+  }
+
+  // =========================================================================
   // INITIALIZATION
   // =========================================================================
   closeDisclaimer();
@@ -1094,5 +1843,7 @@
   loadInitialHistory();
   checkApiStatus();
   setInterval(checkApiStatus, 15000);
+  initSegmentationLab();
 
 })();
+

@@ -11,6 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
+  <!-- 3D Volumetric Mesh Rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
 
@@ -115,6 +118,13 @@
             <button class="sidebar-item" data-tab="workspace">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="3"/></svg>
               <span>MRI Workspace</span>
+            </button>
+          </li>
+          <li>
+            <button class="sidebar-item" data-tab="segmentation">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              <span>Segmentation Lab</span>
+              <span class="badge badge-cyan sidebar-tag-pill">3D</span>
             </button>
           </li>
           <li>
@@ -865,6 +875,289 @@
                 </div>
               </div>
             </aside>
+          </div>
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- VIEW 3.5: 3D TUMOR SEGMENTATION WORKSTATION    -->
+        <!-- ============================================== -->
+        <section class="tab-view" id="view-segmentation">
+          <div class="view-header">
+            <div>
+              <div class="seg-title-row">
+                <h1 class="view-title">3D Tumor Segmentation Lab</h1>
+                <span class="badge badge-cyan" id="segEngineStatusBadge">● 3D U-NET READY</span>
+                <span class="badge badge-secondary mono">BraTS Protocol &bull; 4-Channel</span>
+              </div>
+              <p class="view-subtitle">Multi-parametric volumetric NIfTI segmentation, BraTS subregion deconstruction (WT/TC/ET), and interactive 3D isosurface modeling.</p>
+            </div>
+            <div class="view-header-actions">
+              <button class="btn btn-secondary" id="segLoadBenchmarkBtn" title="Load Authentic Benchmark Study">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <span>Benchmark Presets</span>
+              </button>
+              <button class="btn btn-primary" id="segUploadTriggerBtn" title="Upload Volumetric NIfTI">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Upload NIfTI (.nii/.nii.gz)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hidden Upload Inputs -->
+          <input type="file" id="segFileInput" accept=".nii,.nii.gz" style="display:none;">
+          <input type="file" id="segGtFileInput" accept=".nii,.nii.gz" style="display:none;">
+
+          <!-- AUTHENTIC CLINICAL BENCHMARK PRESETS BAR -->
+          <div class="card seg-presets-card">
+            <div class="seg-presets-header">
+              <div>
+                <h3 class="card-title">Authentic Research Study Presets (BraTS Protocol)</h3>
+                <p class="card-desc">Click any volumetric case to immediately run 3D sliding-window segmentation and extract 3D surface geometry:</p>
+              </div>
+              <span class="badge badge-secondary mono">240 &times; 240 &times; 155 Voxels &bull; Isotropic 1.0mm³</span>
+            </div>
+            <div class="seg-presets-grid" id="segPresetsGrid">
+              <!-- All 6 genuine BraTS 2023 adult glioma studies -->
+              <button class="seg-preset-card active" data-seg-sample="case_001">
+                <div class="seg-preset-dot danger"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00000 (#001 GBM)</span>
+                  <span class="seg-preset-sub mono">Necrotic core &bull; Enhancing rim &bull; Edema</span>
+                </div>
+                <span class="badge badge-danger mono">BraTS T1-CE</span>
+              </button>
+              <button class="seg-preset-card" data-seg-sample="case_002">
+                <div class="seg-preset-dot warning"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00002 (#002 Glioma)</span>
+                  <span class="seg-preset-sub mono">Fronto-temporal &bull; Vasogenic edema</span>
+                </div>
+                <span class="badge badge-warning mono">BraTS T1-CE</span>
+              </button>
+              <button class="seg-preset-card" data-seg-sample="case_003">
+                <div class="seg-preset-dot danger"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00003 (#003 Astrocytoma)</span>
+                  <span class="seg-preset-sub mono">Parieto-occipital &bull; Necrotic core</span>
+                </div>
+                <span class="badge badge-danger mono">BraTS T1-CE</span>
+              </button>
+              <button class="seg-preset-card" data-seg-sample="case_004">
+                <div class="seg-preset-dot danger"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00005 (#004 Glioblastoma)</span>
+                  <span class="seg-preset-sub mono">Deep white matter &bull; Mass effect</span>
+                </div>
+                <span class="badge badge-danger mono">BraTS T1-CE</span>
+              </button>
+              <button class="seg-preset-card" data-seg-sample="case_005">
+                <div class="seg-preset-dot warning"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00006 (#005 Temporal Glioma)</span>
+                  <span class="seg-preset-sub mono">Left temporal &bull; Confluent edema</span>
+                </div>
+                <span class="badge badge-warning mono">BraTS T1-CE</span>
+              </button>
+              <button class="seg-preset-card" data-seg-sample="case_006">
+                <div class="seg-preset-dot info"></div>
+                <div class="seg-preset-info">
+                  <span class="seg-preset-title">BraTS-GLI-00008 (#006 Focal Glioma)</span>
+                  <span class="seg-preset-sub mono">Focal subcortical &bull; Circumscribed</span>
+                </div>
+                <span class="badge badge-info mono">BraTS T1-CE</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- MAIN WORKSTATION 2-COLUMN RADIOLOGY GRID -->
+          <div class="seg-workstation-grid">
+            
+            <!-- LEFT COLUMN: MULTI-PLANAR 2D VIEWER (MPR) -->
+            <div class="card seg-viewer-card">
+              <div class="seg-card-header">
+                <div class="seg-plane-selector">
+                  <button class="btn-plane active" data-plane="axial">Axial (Z)</button>
+                  <button class="btn-plane" data-plane="coronal">Coronal (Y)</button>
+                  <button class="btn-plane" data-plane="sagittal">Sagittal (X)</button>
+                </div>
+                <div class="seg-viewmode-selector">
+                  <button class="btn-mode active" data-mode="overlay" title="Sliding-window 3D U-Net Model Output">Prediction (Experimental)</button>
+                  <button class="btn-mode" data-mode="gt" id="btnModeGt" title="ASNR-MICCAI Expert Manual Delineation">Ground Truth (Expert)</button>
+                  <button class="btn-mode" data-mode="split" title="Simultaneous Comparative Inspection">Split Compare</button>
+                  <button class="btn-mode" data-mode="raw" title="Pure MRI Slice without Mask">Raw MRI</button>
+                </div>
+              </div>
+
+              <!-- Radiology Stage Viewport -->
+              <div class="seg-canvas-container" id="segCanvasContainer">
+                <div class="seg-stage-wrap" id="segStageWrap">
+                  <img id="segMriSliceImg" class="seg-slice-base" alt="Base MRI Slice">
+                  <img id="segPredSliceImg" class="seg-slice-overlay" alt="Predicted Segmentation Mask">
+                  <img id="segGtSliceImg" class="seg-slice-gt" alt="Ground Truth Mask" style="display:none;">
+
+                  <!-- Crosshair and HUD Overlays -->
+                  <div class="seg-crosshair" id="segCrosshair"></div>
+                  <div class="seg-hud top-left mono" id="segHudStudy">STUDY: BraTS-2023-GBM-001</div>
+                  <div class="seg-hud top-right mono" id="segHudPlane">PLANE: AXIAL (Z)</div>
+                  <div class="seg-hud bottom-left mono" id="segHudSlice">SLICE: 48 / 96</div>
+                  <div class="seg-hud bottom-right mono" id="segHudSpacing">SPACING: 1.0 &times; 1.0 &times; 1.0 mm</div>
+
+                  <!-- Loading State Overlay -->
+                  <div class="seg-loading-overlay" id="segLoadingOverlay" style="display:none;">
+                    <div class="spinner"></div>
+                    <span class="mono" id="segLoadingText">Running 3D U-Net Sliding-Window Inference...</span>
+                  </div>
+
+                  <!-- Missing Checkpoint / Empty State Banner -->
+                  <div class="seg-empty-overlay" id="segEmptyOverlay" style="display:none;">
+                    <div class="empty-icon">🔬</div>
+                    <h3 id="segEmptyTitle">No Volumetric Study Loaded</h3>
+                    <p id="segEmptyDesc">Select an authentic BraTS benchmark study above or upload a .nii/.nii.gz volume to begin 3D segmentation.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Slice Navigation & Controls Dock -->
+              <div class="seg-footer-dock">
+                <div class="seg-slice-control-bar">
+                  <button class="btn-icon" id="segPrevSliceBtn" title="Previous Slice (Left Arrow)">◀</button>
+                  <button class="btn-icon" id="segPlayCineBtn" title="Play/Pause Cine Loop (Spacebar)">▶ Cine</button>
+                  <button class="btn-icon" id="segNextSliceBtn" title="Next Slice (Right Arrow)">▶</button>
+
+                  <input type="range" id="segSliceSlider" min="0" max="95" value="48" class="custom-range flex-1" title="Scrub Slices">
+
+                  <div class="seg-slice-badge mono">
+                    <span>Slice</span>
+                    <input type="number" id="segSliceInput" min="0" max="95" value="48" class="slice-num-input">
+                    <span id="segSliceTotalText">/ 96</span>
+                  </div>
+                </div>
+
+                <div class="seg-dock-adjusters">
+                  <div class="seg-adjuster">
+                    <span class="adjuster-label mono">OVERLAY OPACITY</span>
+                    <input type="range" id="segOpacitySlider" min="0" max="100" value="70" class="mini-range">
+                    <span class="mono" id="segOpacityVal">70%</span>
+                  </div>
+                  <div class="seg-adjuster">
+                    <span class="adjuster-label mono">CONTRAST</span>
+                    <input type="range" id="segContrastSlider" min="50" max="180" value="100" class="mini-range">
+                  </div>
+                  <button class="btn btn-secondary-sm" id="segAttachGtBtn" title="Upload reference ground truth mask for validation comparison">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Attach GT Mask</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: 3D ISOSURFACE VIEWER & QUANTITATIVE MORPHOMETRICS -->
+            <div class="seg-side-column">
+              <!-- 3D TUMOR ISOSURFACE VIEWER CARD -->
+              <div class="card seg-3d-card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title">Interactive 3D Tumor Isosurface</h3>
+                    <span class="card-sub-mono mono">Derived from true segmented voxels &bull; Marching Cubes</span>
+                  </div>
+                  <div class="badge-group">
+                    <button class="btn-tool-sm" id="seg3dResetCamBtn" title="Reset Camera Orientation">Reset Cam</button>
+                    <button class="btn-tool-sm active" id="seg3dRotateToggleBtn" title="Toggle Auto-Rotation">Auto-Rotate</button>
+                  </div>
+                </div>
+
+                <div class="seg-3d-viewport" id="seg3dViewport">
+                  <canvas id="seg3dCanvas"></canvas>
+                  <div class="seg-3d-empty mono" id="seg3dEmpty">3D Surface Geometry Ready Upon Inference</div>
+                  <div class="seg-3d-axes-hud mono">
+                    <span>S (Superior)</span>
+                    <span>A (Anterior) &bull; R (Right)</span>
+                  </div>
+                </div>
+
+                <div class="seg-3d-controls">
+                  <div class="seg-region-toggles">
+                    <label class="region-toggle-label">
+                      <input type="checkbox" id="toggleRegionWT" checked>
+                      <span class="region-chip chip-wt">■ Whole Tumor (WT)</span>
+                    </label>
+                    <label class="region-toggle-label">
+                      <input type="checkbox" id="toggleRegionTC" checked>
+                      <span class="region-chip chip-tc">■ Tumor Core (TC)</span>
+                    </label>
+                    <label class="region-toggle-label">
+                      <input type="checkbox" id="toggleRegionET" checked>
+                      <span class="region-chip chip-et">■ Enhancing (ET)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- QUANTITATIVE VOLUMETRICS CARD -->
+              <div class="card seg-metrics-card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title">Volumetric Morphometrics</h3>
+                    <span class="card-sub-mono mono" id="segVolVoxelMeta">Physical integration: 1.0mm³ / voxel</span>
+                  </div>
+                  <span class="badge badge-cyan mono" id="segTotalVolChip">0.00 cm³</span>
+                </div>
+
+                <div class="seg-vol-table-wrap">
+                  <table class="seg-vol-table">
+                    <thead>
+                      <tr>
+                        <th>SUBREGION</th>
+                        <th>VOXELS</th>
+                        <th>VOL (cm³)</th>
+                        <th>VOL (mm³)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="segVolTableBody">
+                      <!-- Dynamically populated rows -->
+                      <tr>
+                        <td><span class="region-badge badge-wt">Whole Tumor (WT)</span></td>
+                        <td class="mono">--</td>
+                        <td class="mono">--</td>
+                        <td class="mono">--</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- GROUND TRUTH EVALUATION METRICS CARD -->
+                <div class="seg-validation-card" id="segValidationCard">
+                  <div class="validation-header">
+                    <span class="section-title-sm">GROUND TRUTH VALIDATION METRICS</span>
+                    <span class="badge badge-success" id="segDiceOverallBadge">Dice: --</span>
+                  </div>
+                  <div class="validation-metrics-grid" id="segValidationGrid">
+                    <div class="metric-box">
+                      <span class="m-label">Whole Tumor (WT) Dice</span>
+                      <span class="m-val mono" id="metricWtDice">--</span>
+                    </div>
+                    <div class="metric-box">
+                      <span class="m-label">Tumor Core (TC) Dice</span>
+                      <span class="m-val mono" id="metricTcDice">--</span>
+                    </div>
+                    <div class="metric-box">
+                      <span class="m-label">Enhancing Tumor (ET) Dice</span>
+                      <span class="m-val mono" id="metricEtDice">--</span>
+                    </div>
+                    <div class="metric-box">
+                      <span class="m-label">Mean IoU (Jaccard)</span>
+                      <span class="m-val mono" id="metricMeanIou">--</span>
+                    </div>
+                  </div>
+                  <div class="validation-note mono" id="segValidationNote">
+                    Ground-truth comparison computed across isotropic voxel space.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
           </div>
         </section>
 

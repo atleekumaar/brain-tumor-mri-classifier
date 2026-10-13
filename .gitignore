@@ -65,10 +65,11 @@ frontend/.env.*
 *.h5
 *.keras
 
-# Ignore large datasets
+# Ignore large datasets (except tracked segmentation demo benchmark suite)
 data/
 dataset/
 datasets/
+!backend/segmentation/data/
 
 # Jupyter
 .ipynb_checkpoints/
